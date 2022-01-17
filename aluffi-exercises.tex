@@ -1,0 +1,338 @@
+% Document setup
+\documentclass[article, a4paper, 11pt, oneside]{memoir}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+
+% Document info
+\newcommand\doctitle{Aluffi, \emph{Algebra: Chapter 0}}
+\newcommand\docauthor{Danny Nygård Hansen}
+
+% Formatting and layout
+\usepackage[autostyle]{csquotes}
+\usepackage[final]{microtype}
+\usepackage{xcolor}
+\frenchspacing
+\usepackage{latex-sty/articlepagestyle}
+\usepackage{latex-sty/articlesectionstyle}
+
+% Fonts
+\usepackage[largesmallcaps]{kpfonts}
+\DeclareSymbolFontAlphabet{\mathrm}{operators} % https://tex.stackexchange.com/questions/40874/kpfonts-siunitx-and-math-alphabets
+\linespread{1.06}
+\let\mathfrak\undefined
+\usepackage{eufrak}
+\usepackage{inconsolata}
+\usepackage{amssymb}
+
+% Hyperlinks
+\usepackage{hyperref}
+\definecolor{linkcolor}{HTML}{4f4fa3}
+\hypersetup{%
+	pdftitle=\doctitle,
+	pdfauthor=\docauthor,
+	colorlinks,
+	linkcolor=linkcolor,
+	citecolor=linkcolor,
+	urlcolor=linkcolor,
+	bookmarksnumbered=true
+}
+
+% Equation numbering
+\numberwithin{equation}{chapter}
+
+% Footnotes
+\footmarkstyle{\textsuperscript{#1}\hspace{0.25em}}
+
+% Mathematics
+\usepackage{latex-sty/basicmathcommands}
+\usepackage{latex-sty/framedtheorems}
+\usepackage{latex-sty/topologycommands}
+\usepackage{tikz-cd}
+\usetikzlibrary{babel}
+
+% Lists
+\usepackage{enumitem}
+\setenumerate[0]{label=\normalfont(\alph*)}
+
+% Bibliography
+\usepackage[backend=biber, style=authoryear, maxcitenames=2, useprefix]{biblatex}
+\addbibresource{references.bib}
+
+% Title
+\title{\doctitle}
+\author{\docauthor}
+
+\newcommand{\setF}{\mathbb{F}}
+\newcommand{\ev}{\mathrm{ev}}
+\newcommand{\calT}{\mathcal{T}}
+\newcommand{\calU}{\mathcal{U}}
+\newcommand{\calB}{\mathcal{B}}
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\calF}{\mathcal{F}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calA}{\mathcal{A}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calR}{\mathcal{R}}
+\newcommand{\borel}{\mathcal{B}}
+\newcommand{\measurable}{\mathcal{M}}
+\newcommand{\wto}{\Rightarrow}
+\DeclarePairedDelimiter{\net}{\langle}{\rangle}
+\newcommand{\strucS}{\mathfrak{S}}
+\DeclarePairedDelimiter{\gen}{\langle}{\rangle} % Generating set
+\newcommand{\frakL}{\mathfrak{L}}
+
+% Categories
+\newcommand{\cat}[1]{\mathcal{#1}}
+\newcommand{\scat}[1]{\mathbf{#1}} % category supposed to be small
+\newcommand{\ncat}[1]{\mathbf{#1}} % named categories like Set, Top
+
+\newcommand{\catSet}{\ncat{Set}} % Category of sets
+\newcommand{\catGrp}{\ncat{Grp}} % Category of groups
+
+
+%% Framed exercise environment
+
+\mdfdefinestyle{swannexercise}{%
+    skipabove=0.5em plus 0.4em minus 0.2em,
+	skipbelow=0.5em plus 0.4em minus 0.2em,
+	leftmargin=-5pt,
+	rightmargin=-5pt,
+	innerleftmargin=5pt,
+	innerrightmargin=5pt,
+	innertopmargin=5pt,
+	innerbottommargin=4pt,
+	linewidth=0pt,
+	splittopskip=1.2em minus 0.2em,
+	splitbottomskip=0.5em plus 0.2em minus 0.1em,
+	backgroundcolor=backgroundcolor,
+	frametitlebackgroundcolor=titlecolor,
+	frametitlefont={\scshape},
+    theoremseparator={\space\thesection},
+    theoremspace={.},
+	frametitleaboveskip=3pt,
+	frametitlebelowskip=2pt
+}
+
+\mdtheorem[style=swannexercise]{exerciseframed}{Exercise}
+
+\let\oldexerciseframed\exerciseframed
+\renewcommand{\exerciseframed}{%
+  \crefalias{theorem}{exerciseframed}%
+  \oldexerciseframed}
+
+\makeatother
+
+\theoremstyle{nonumberplain}
+\theoremsymbol{\ensuremath{\square}}
+\newtheorem{solution}{Solution}
+
+\let\oldsolution\solution
+\renewcommand{\solution}{%
+  \crefalias{theorem}{solution}%
+  \oldsolution}
+
+\newcommand{\solutionlabelfont}[1]{{\normalfont\color{linkcolor}#1}}
+\newlist{solutionsec}{enumerate}{1}
+\setlist[solutionsec]{leftmargin=0pt, parsep=0pt, listparindent=\parindent, font=\solutionlabelfont, label=(\alph*), labelsep=0pt, labelwidth=20pt, itemindent=20pt, align=left, itemsep=10pt}
+
+
+\renewcommand{\thechapter}{\Roman{chapter}}
+\renewcommand{\thesection}{\arabic{section}}
+
+\DeclarePairedDelimiter{\ord}{\lvert}{\rvert}
+
+\begin{document}
+
+\maketitle
+
+\chapter{Preliminaries: Set theory and categories}
+
+\chapter{Groups, first encounter}
+
+\section{Definition of group}
+
+\begin{exerciseframed*}[4]
+    Suppose that $g^2 = e$ for all elements $g$ of a group $G$; prove that $G$ is commutative.
+\end{exerciseframed*}
+
+\begin{solution}
+    The hypothesis implies that $g = g\inv$ for all $g \in G$. For $g,h \in G$ we thus have
+    %
+    \begin{equation*}
+        gh
+        = (gh)\inv
+        = h\inv g\inv
+        = hg
+    \end{equation*}
+    %
+    as desired.
+\end{solution}
+    
+
+\begin{exerciseframed*}[8]
+    Let $G$ be a finite abelian group with exactly one element $f$ of order $2$. Prove that $\bigprod_{g \in G} g = f$.
+\end{exerciseframed*}
+
+\begin{solution}
+    Every element $g$ in $G$ different from $e$ and $f$ has order greater than two, hence $g \neq g\inv$. The product $\bigprod_{g \in G \setminus \{e,f\}} g$ therefore contains all such elements along with their inverses, and thus equals $e$. The claim follows.
+\end{solution}
+
+
+\begin{exerciseframed*}[9]
+    Let $G$ be a finite group, of order $n$, and let $m$ be the number of elements $g \in G$ of order exactly $2$. Prove that $n-m$ is odd. Deduce that if $n$ is even, then $G$ necessarily contains elements of order $2$.
+\end{exerciseframed*}
+
+\begin{solution}
+    Let $G'$ denote the set of elements in $G$ with order greater than $2$. We claim that $\card{G'}$ is even, and we give two arguments for this fact. First, simply notice that the elements of $G'$ come in pairs $\{g, g\inv\}$ with $g \neq g\inv$.
+
+    For a more precise argument (using group theory language we haven't seen yet), consider the inversion map $g \mapsto g\inv$. This restricts to a well-defined map $\iota \colon G' \to G'$, and $\iota$ is a permutation of $G'$. Letting the cyclic group $\langle \iota \rangle \leq S_{G'}$ act on $G'$ splits $G'$ into orbits of size two, and since these orbits determine a partition of $G'$, $\card{G'}$ must be even.
+
+    Now notice that $G'$ contains $n-m-1$ elements since $e$ has order $1$, hence $n-m$ is odd. If $n$ is even, then $m$ must be odd and thus at least $1$.
+\end{solution}
+
+
+\begin{exerciseframed*}[11]
+    Prove that for all $g,h$ in a group $G$, $\ord{gh} = \ord{hg}$.
+\end{exerciseframed*}
+
+\begin{solution}
+    Let $a,g \in G$, and let $n = \ord{g}$. Then
+    %
+    \begin{equation*}
+        (aga\inv)^n
+            = a g^n a\inv
+            = e,
+    \end{equation*}
+    %
+    so the order of $aga\inv$ divides the order of $g$. Substituting $g \to aga\inv$ and $a \to a\inv$ shows that $\ord{g}$ also divides $\ord{aga\inv}$, so $\ord{g} = \ord{aga\inv}$. Finally substituting $g \to gh$ and $a \to h$ proves the claim.
+
+    Alternatively, the conjugation map $g \mapsto aga\inv$ is an isomorphism, so it preserves orders.
+\end{solution}
+
+
+\section{Examples of groups}
+
+\begin{exerciseframed*}[1]
+    One can associate an $n \times n$ matrix $M_\sigma$ with a permutation $\sigma \in S_n$ by letting the entry at\footnotemark{} $(i,\sigma(i))$ be $1$ and letting all other entries be $0$. Prove that, with this notation,
+    %
+    \begin{equation*}
+        M_\sigma M_\tau = M_{\tau\sigma}
+    \end{equation*}
+    %
+    for all $\sigma, \tau \in S_n$, where the product on the right is the ordinary product of matrices.
+\end{exerciseframed*}\footnotetext{Contrary to Aluffi, we prefer to let permutation act on the left.}
+
+\begin{solution}
+    Notice that, for $1 \leq i,j \leq n$,
+    %
+    \begin{equation*}
+        (M_\sigma M_\tau)_{ij}
+            = \sum_{k=1}^n (M_\sigma)_{ik} (M_\tau)_{kj},
+    \end{equation*}
+    %
+    and that the summand $(M_\sigma)_{ik} (M_\tau)_{kj}$ is $1$ just when $\sigma(i) = k$ and $\tau\sigma(i) = j$, and $0$ otherwise. Thus,
+    %
+    \begin{equation*}
+        (M_\sigma M_\tau)_{ij} =
+            \begin{cases}
+                1, & \tau\sigma(i) = j, \\
+                0, & \text{otherwise},
+            \end{cases}
+    \end{equation*}
+    %
+    which is just the definition of the matrix $M_{\tau\sigma}$.
+\end{solution}
+
+
+\begin{exerciseframed*}[13]
+    Prove that if $\gcd(m,n) = 1$, then there exist integers $a$ and $b$ such that
+    %
+    \begin{equation*}
+        am + bn = 1.
+    \end{equation*}
+    %
+    Conversely, prove that if $am + bn = 1$ for some integers $a$ and $b$, then $\gcd(m,n) = 1$.
+\end{exerciseframed*}
+
+\begin{solution}
+    By Corollary~2.5, the class $[m]_n$ generates $\ints/n\ints$. Hence there exists an $a \in \ints$ such that $a [m]_n = [1]_n$. But then $qn = am - 1$ for some $q \in \ints$, i.e. $am + (-q)n = 1$.
+
+    Conversely, if $am + bn = 1$ and $d$ divides both $m$ and $n$, then $d$ also divides $1$ and hence $d = \pm 1$.
+\end{solution}
+
+
+\section[The category Grp][The category $\catGrp$]{The category $\catGrp$}
+
+
+\section{Group homomorphisms}
+
+\begin{exerciseframed*}[1]
+    Check that the function $\pi_m^n$ defined in §4.1 is well-defined and makes the diagram commute. Verify that it is a group homomorphism. % Why is the hypothesis $m \mid n$ necessary?
+\end{exerciseframed*}
+
+\begin{solution}
+    Recall that $\pi_m^n \colon \ints/n\ints \to \ints/m\ints$ is defined by $\pi_m^n([a]_n) = [a]_m$, assuming that $m \mid n$. To show that this is well-defined, let $a,b \in \ints$ with $a \equiv b \pmod n$. This means that $n \mid a - b$, and hence that $m \mid a - b$, i.e. that $a \equiv b \pmod m$. In other words, $[a]_n = [b]_n$ implies that $[a]_m = [b]_m$, and thus $\pi_m^n$ is well-defined. It is also obvious that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            \ints
+                \ar[d, "\pi_n", swap]
+                \ar[dr, "\pi_m"] \\
+            \ints/n\ints
+                \ar[r, "\pi_m^n", swap]
+            & \ints/m\ints
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes, since $\pi_n(a) = [a]_n$ and $\pi_m(a) = [a]_m$.
+
+    Finally we show that $\pi_m^n$ is a homomorphism. For $a,b \in \ints$ we have
+    %
+    \begin{align*}
+        \pi_m^n([a]_n + [b]_n)
+            &= \pi_m^n([a + b]_n)
+             = [a + b]_m
+             = [a]_m + [b]_m \\
+            &= \pi_m^n([a]_n) + \pi_m^n([b]_n)
+    \end{align*}
+    %
+    as desired.
+\end{solution}
+
+
+\begin{exerciseframed*}[9]
+    Prove that if $m,n$ are positive integers such that $\gcd(m,n) = 1$, then $C_{mn} \cong C_m \prod C_n$.
+\end{exerciseframed*}
+
+\begin{solution}
+    The map $\pi = (\pi_m^{mn}, \pi_n^{mn})$ is a group homomorphism, and since the sets $C_{mn}$ and $C_m \prod C_n$ have the same cardinality, it suffices to show that $\pi$ is injective. Using additive notation, if $\pi([a]_{mn}) = \pi([b]_{mn})$ then $[a]_m = [b]_m$, i.e. $m \mid a - b$. Similarly $n \mid a - b$, and since $\gcd(m,n) = 1$ we have $mn \mid a - b$. It follows that $[a]_{mn} = [b]_{mn}$ as desired.
+\end{solution}
+
+
+\section{Free groups}
+
+\section{Subgroups}
+
+\begin{exerciseframed*}[6]
+    Prove that the union of a family of subgroups of a group $G$ is not necessarily a subgroup of $G$. In fact:
+    %
+    \begin{enumerate}
+        \item Let $H,H'$ be subgroups of a group $G$. Prove that $H \union H'$ is a subgroup of $G$ only if $H \subseteq H'$ or $H' \subseteq H$.
+        \item On the other hand, let $H_0 \subseteq H_1 \subseteq H_2 \subseteq \cdots$ be subgroups of a group $G$. Prove that $\bigunion_{i \geq 0} H_i$ \emph{is} a subgroup of $G$.
+    \end{enumerate}
+\end{exerciseframed*}
+
+\begin{solution}
+\begin{solutionsec}
+    \item Assume that $H \union H'$ is a subgroup of $G$ and let $h \in H$ and $h' \in H'$. Then $hh' \in H \union H'$, say $hh' \in H$. But then $h' = h\inv (hh') \in H$, so $h' \in H$ and hence $H' \subseteq H$. Similarly if $hh' \in H'$.
+    
+    \item Write $H = \bigunion_{i \geq 0} H_i$. If $g,h \in H$, then $g \in H_i$ and $h \in H_j$ for some $i,j \in \naturals$.\footnote{The natural numbers include zero.} Hence $g,h \in H_i \union H_j = H_{i \join j} \subseteq H$. We furthermore have $g\inv \in H_i \subseteq H$.
+\end{solutionsec}
+\end{solution}
+
+
+\end{document}
