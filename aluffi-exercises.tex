@@ -92,6 +92,7 @@
 
 \newcommand{\catSet}{\ncat{Set}} % Category of sets
 \newcommand{\catGrp}{\ncat{Grp}} % Category of groups
+\newcommand{\catAb}{\ncat{Ab}} % Category of abelian groups
 
 
 %% Framed exercise environment
@@ -124,6 +125,15 @@
   \crefalias{theorem}{exerciseframed}%
   \oldexerciseframed}
 
+\settocdepth{subsection}
+\renewenvironment{exerciseframed}[1][]{%
+    \phantomsection%
+    \addcontentsline{toc}{subsection}{Exercise \thesection.#1}%
+    \begin{exerciseframed*}[#1]%
+}{%
+    \end{exerciseframed*}%
+}
+
 \makeatother
 
 \theoremstyle{nonumberplain}
@@ -144,6 +154,9 @@
 \renewcommand{\thesection}{\arabic{section}}
 
 \DeclarePairedDelimiter{\ord}{\lvert}{\rvert}
+\DeclareMathOperator{\lcm}{lcm}
+\DeclareMathOperator{\Aut}{Aut}
+\DeclareMathOperator{\Inn}{Inn}
 
 \begin{document}
 
@@ -155,9 +168,9 @@
 
 \section{Definition of group}
 
-\begin{exerciseframed*}[4]
+\begin{exerciseframed}[4]
     Suppose that $g^2 = e$ for all elements $g$ of a group $G$; prove that $G$ is commutative.
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     The hypothesis implies that $g = g\inv$ for all $g \in G$. For $g,h \in G$ we thus have
@@ -171,20 +184,20 @@
     %
     as desired.
 \end{solution}
-    
 
-\begin{exerciseframed*}[8]
+
+\begin{exerciseframed}[8]
     Let $G$ be a finite abelian group with exactly one element $f$ of order $2$. Prove that $\bigprod_{g \in G} g = f$.
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     Every element $g$ in $G$ different from $e$ and $f$ has order greater than two, hence $g \neq g\inv$. The product $\bigprod_{g \in G \setminus \{e,f\}} g$ therefore contains all such elements along with their inverses, and thus equals $e$. The claim follows.
 \end{solution}
 
 
-\begin{exerciseframed*}[9]
+\begin{exerciseframed}[9]
     Let $G$ be a finite group, of order $n$, and let $m$ be the number of elements $g \in G$ of order exactly $2$. Prove that $n-m$ is odd. Deduce that if $n$ is even, then $G$ necessarily contains elements of order $2$.
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     Let $G'$ denote the set of elements in $G$ with order greater than $2$. We claim that $\card{G'}$ is even, and we give two arguments for this fact. First, simply notice that the elements of $G'$ come in pairs $\{g, g\inv\}$ with $g \neq g\inv$.
@@ -195,9 +208,9 @@
 \end{solution}
 
 
-\begin{exerciseframed*}[11]
+\begin{exerciseframed}[11]
     Prove that for all $g,h$ in a group $G$, $\ord{gh} = \ord{hg}$.
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     Let $a,g \in G$, and let $n = \ord{g}$. Then
@@ -214,9 +227,36 @@
 \end{solution}
 
 
+\begin{exerciseframed}[13]
+    Give an example showing that $\ord{gh}$ is not necessarily equal to $\lcm(\ord{g}, \ord{h})$, even if $g$ and $h$ commute.
+\end{exerciseframed}
+
+\begin{solution}
+    In $\ints/4\ints$ we have $\ord{[2]_4} = 2$ and $\ord{[2]_4 + [2]_4} = \ord{[0]_4} = 1$.
+\end{solution}
+
+
+\begin{exerciseframed}[14]
+    Prove that if $g$ and $h$ commute \emph{and} $\gcd(\ord{g}, \ord{h}) = 1$, then $\ord{gh} = \ord{g} \, \ord{h}$.
+\end{exerciseframed}
+
+\begin{solution}
+    First recall that $\lcm(\ord{g}, \ord{h}) = \ord{g} \, \ord{h}$, so Proposition~1.14 implies that $\ord{gh}$ divides $\ord{g} \, \ord{h}$. Conversely, letting $N = \ord{gh}$ we have
+    %
+    \begin{equation*}
+        e
+            = (gh)^{\ord{g}N}
+            = g^{\ord{g}N} h^{\ord{g}N}
+            = h^{\ord{g}N},
+    \end{equation*}
+    %
+    so $\ord{h}$ divides $\ord{g}N$. But since $\ord{g}$ and $\ord{h}$ are relatively prime, $\ord{h}$ divides $N$. So does $\ord{g}$, so again using relative primality we find that $\ord{g} \, \ord{h}$ divides $N$. In total, $\ord{gh} = \ord{g} \, \ord{h}$.
+\end{solution}
+
+
 \section{Examples of groups}
 
-\begin{exerciseframed*}[1]
+\begin{exerciseframed}[1]
     One can associate an $n \times n$ matrix $M_\sigma$ with a permutation $\sigma \in S_n$ by letting the entry at\footnotemark{} $(i,\sigma(i))$ be $1$ and letting all other entries be $0$. Prove that, with this notation,
     %
     \begin{equation*}
@@ -224,7 +264,7 @@
     \end{equation*}
     %
     for all $\sigma, \tau \in S_n$, where the product on the right is the ordinary product of matrices.
-\end{exerciseframed*}\footnotetext{Contrary to Aluffi, we prefer to let permutation act on the left.}
+\end{exerciseframed}\footnotetext{Contrary to Aluffi, we prefer to let permutation act on the left.}
 
 \begin{solution}
     Notice that, for $1 \leq i,j \leq n$,
@@ -248,7 +288,7 @@
 \end{solution}
 
 
-\begin{exerciseframed*}[13]
+\begin{exerciseframed}[13]
     Prove that if $\gcd(m,n) = 1$, then there exist integers $a$ and $b$ such that
     %
     \begin{equation*}
@@ -256,7 +296,7 @@
     \end{equation*}
     %
     Conversely, prove that if $am + bn = 1$ for some integers $a$ and $b$, then $\gcd(m,n) = 1$.
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     By Corollary~2.5, the class $[m]_n$ generates $\ints/n\ints$. Hence there exists an $a \in \ints$ such that $a [m]_n = [1]_n$. But then $qn = am - 1$ for some $q \in \ints$, i.e. $am + (-q)n = 1$.
@@ -267,12 +307,143 @@
 
 \section[The category Grp][The category $\catGrp$]{The category $\catGrp$}
 
+\begin{exerciseframed}[3]
+    Show that if $G,H$ are \emph{abelian} groups, then $G \prod H$ satisfies the universal property for coproducts in $\catAb$.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $\phi_G \colon G \to K$ and $\phi_H \colon H \to K$ be homomorphisms into an abelian group $K$. Define a map $\psi \colon H \prod G \to K$ by
+    %
+    \begin{equation*}
+        \psi(g,h)
+            = \phi_G(g) \phi_H(h).
+    \end{equation*}
+    %
+    We first show that $\psi$ is a group homomorphism. For $g_1,g_2 \in G$ and $h_1, h_2 \in H$ we have
+    %
+    \begin{align*}
+        \psi((g_1,h_1)(g_2,h_2))
+            &= \psi(g_1 g_2, h_1 h_2)
+             = \phi_G(g_1 g_2) \phi_H(h_1 h_2) \\
+            &= \phi_G(g_1) \phi_G(g_2) \phi_H(h_1) \phi_H(h_2) \\
+            &= \phi_G(g_1) \phi_H(h_1) \phi_G(g_2) \phi_H(h_2) \\
+            &= \psi(g_1, h_1) \psi(g_2, h_2).
+    \end{align*}
+    %
+    In the third equality we used that $K$ is abelian. Next we show that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            G
+                \ar[dr, "\iota_G"]
+                \ar[drr, "\phi_G", bend left] \\
+            & G \prod H
+                \ar[r, "\psi"]
+            & K \\
+            H
+                \ar[ur, "\iota_H", swap]
+                \ar[urr, "\phi_H", bend right, swap]
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes, where $\iota_G(g) = (g, e_H)$ and $\iota_H(h) = (e_G, h)$. For the upper triangle we have
+    %
+    \begin{equation*}
+        (\psi \circ \iota_G)(g)
+            = \psi(g, e_G)
+            = \phi_G(g) \phi_H(e_G)
+            = \phi_G(g) e_K
+            = \phi_G(g),
+    \end{equation*}
+    %
+    and similarly for the lower triangle.
+\end{solution}
+
+
+\begin{exerciseframed}[4]
+    Let $G,H$ be groups, and assume that $G \cong H \times G$. Can you conclude that $H$ is trivial?
+\end{exerciseframed}
+
+\begin{solution}
+    Let $H$ be any nontrivial group, and let $G = \bigprod_{n\in\naturals} H$. Then the map $\phi \colon G \to H \prod  G$ given by
+    %
+    \begin{equation*}
+        \phi(h_1, h_2, h_3, \ldots)
+            = \bigl( h_1, (h_2, h_3, \ldots) \bigr)
+    \end{equation*}
+    %
+    is an isomorphism.
+\end{solution}
+
+
+\begin{exerciseframed}[5]
+    Prove that $\rationals$ is not the direct product of two nontrivial groups.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $G$ and $H$ be groups such that there is an isomorphism $\phi \colon \rationals \to G \prod H$. Assume without loss of generality that $G$ is nontrivial, and consider the map $\phi_G = \pi_G \circ \phi$. We claim that $\phi_G$ is injective.
+
+    First notice that if $g \in G$ has finite order then $g = 0_G$, since $(g,0_H)$ has finite order in $G \prod H$. Let $p,q \in \ints$ with $p,q \neq 0$, and notice that $\phi_G(p/q) = 0_G$ implies that
+    %
+    \begin{equation*}
+        0_G
+            = q \phi_G \Bigl( \frac{p}{q} \Bigr)
+            = \phi_G(p)
+            = p \phi_G(1).
+    \end{equation*}
+    %
+    Hence $\phi_G(1) = 0_G$, and so $\ints \subseteq \ker \phi_G$. Furthermore, if $a,b \in \ints$ with $b \neq 0$, then
+    %
+    \begin{equation*}
+        b \phi_G \Bigl( \frac{a}{b} \Bigr)
+            = \phi_G(a)
+            = 0_G,
+    \end{equation*}
+    %
+    so $\phi_G(a/b)$ has finite order and hence equals $0_G$. Thus if $\ker \phi_G$ is nontrivial, then $\ker \phi_G = \rationals$. But since $\phi_G$ is surjective and $G$ is nontrivial, this is impossible. Hence $\phi_G$ is injective. On the other hand, the kernel of $\phi_G$ is clearly $1 \prod H$, so $H$ must be trivial.
+\end{solution}
+
+
+\begin{exerciseframed}[6]
+    Consider the product $C_2 \prod C_3$ of the cyclic groups $C_2,C_3$. By Exercise~3.3, this group is a coproduct of $C_2$ and $C_3$ in $\catAb$. Show that it is \emph{not} a coproduct of $C_2$ and $C_3$ in $\catGrp$.
+\end{exerciseframed}
+
+\begin{solution}
+    Denote by $g$ and $h$ generators of $C_2$ and $C_3$ respectively, and define group homomorphisms $\phi_2 \colon C_2 \to S_3$ and $\phi_3 \colon C_3 \to S_3$ by
+    %
+    \begin{equation*}
+        \phi_2(g) = (1 \; 2)
+        \quad \text{and} \quad
+        \phi_3(h) = (1 \; 2 \; 3).
+    \end{equation*}
+    %
+    Assume that $C_2 \prod C_3$ is a coproduct of $C_2$ and $C_3$ in $\catGrp$. Then there exists a homomorphism $\psi \colon C_2 \prod C_3 \to S_3$ such that $\phi_2 = \psi \circ \iota_2$ and $\phi_3 = \psi \circ \iota_3$. Since $C_2 \prod C_3$ is commutative, it follows that
+    %
+    \begin{equation*}
+        (1 \; 2) (1 \; 2 \; 3)
+            = \psi( \iota_2(g) \iota_3(h) )
+            = \psi( \iota_3(h) \iota_2(g) )
+            = (1 \; 2 \; 3) (1 \; 2).
+    \end{equation*}
+    %
+    But this is false, so $C_2 \prod C_3$ is not a coprodut of $C_2$ and $C_3$ in $\catGrp$.
+\end{solution}
+
+
+\begin{exerciseframed}[8]
+    Define a group $G$ with two generators $x,y$ subject (only) to the relations $x^2 = e_G$, $y^3 = e_G$. Prove that $G$ is a coproduct of $C_2$ and $C_3$ in $\catGrp$.
+\end{exerciseframed}
+
+\begin{solution}
+    Denote the generators of $C_2$ and $C_3$ by $g$ and $h$ respectively, and let $\phi_2 \colon C_2 \to H$ and $\phi_3 \colon C_3 \to H$ be homomorphisms into a group $H$. Define a map $\psi \colon G \to H$ by letting $\psi(x) = \phi_2(g)$ and $\psi(y) = \phi_3(h)$ and extending to all elements in $G$ by requiring that $\psi$ be a homomorphism. Then $\phi_2 = \psi \circ \iota_2$ and $\phi_3 = \psi \circ \iota_3$, so $G$ is indeed a coproduct.
+\end{solution}
+
 
 \section{Group homomorphisms}
 
-\begin{exerciseframed*}[1]
+\begin{exerciseframed}[1]
     Check that the function $\pi_m^n$ defined in §4.1 is well-defined and makes the diagram commute. Verify that it is a group homomorphism. % Why is the hypothesis $m \mid n$ necessary?
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     Recall that $\pi_m^n \colon \ints/n\ints \to \ints/m\ints$ is defined by $\pi_m^n([a]_n) = [a]_m$, assuming that $m \mid n$. To show that this is well-defined, let $a,b \in \ints$ with $a \equiv b \pmod n$. This means that $n \mid a - b$, and hence that $m \mid a - b$, i.e. that $a \equiv b \pmod m$. In other words, $[a]_n = [b]_n$ implies that $[a]_m = [b]_m$, and thus $\pi_m^n$ is well-defined. It is also obvious that the diagram
@@ -304,9 +475,39 @@
 \end{solution}
 
 
-\begin{exerciseframed*}[9]
+\begin{exerciseframed}[8]
+    Let $G$ be a group, and let $g \in G$. Prove that the function $\gamma_g \colon G \to G$ defined by $\gamma_g(a) = gag\inv$ is an automorphism of $G$. (The automorphisms $\gamma_g$ are called \enquote{inner} automorphisms of $G$.) Prove that the function $G \to \Aut(G)$ defined by $g \mapsto \gamma_g$ is a homomorphism. Prove that this homomorphism is trivial if and only if $G$ is abelian.
+\end{exerciseframed}
+
+\begin{solution}
+    For $a,b \in G$ we have
+    %
+    \begin{equation*}
+        \gamma_g(ab)
+            = g(ab)g\inv
+            = (gag\inv)(gbg\inv)
+            = \gamma_g(a) \gamma_g(b),
+    \end{equation*}
+    %
+    so $\gamma_g$ is a homomorphism. It is obviously invertible with $\gamma_g\inv = \gamma_{g\inv}$, hence an isomorphism.
+
+    Now let also $h \in G$. Then
+    %
+    \begin{equation*}
+        (\gamma_{gh})(a)
+            = (gh)a(gh)\inv
+            = g(hah\inv)g\inv
+            = \gamma_g(hah\inv)
+            = (\gamma_g \circ \gamma_h)(a),
+    \end{equation*}
+    %
+    so $g \mapsto \gamma_g$ is a homomorphism.
+\end{solution}
+
+
+\begin{exerciseframed}[9]
     Prove that if $m,n$ are positive integers such that $\gcd(m,n) = 1$, then $C_{mn} \cong C_m \prod C_n$.
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
     The map $\pi = (\pi_m^{mn}, \pi_n^{mn})$ is a group homomorphism, and since the sets $C_{mn}$ and $C_m \prod C_n$ have the same cardinality, it suffices to show that $\pi$ is injective. Using additive notation, if $\pi([a]_{mn}) = \pi([b]_{mn})$ then $[a]_m = [b]_m$, i.e. $m \mid a - b$. Similarly $n \mid a - b$, and since $\gcd(m,n) = 1$ we have $mn \mid a - b$. It follows that $[a]_{mn} = [b]_{mn}$ as desired.
@@ -317,14 +518,14 @@
 
 \section{Subgroups}
 
-\begin{exerciseframed*}[6]
+\begin{exerciseframed}[6]
     Prove that the union of a family of subgroups of a group $G$ is not necessarily a subgroup of $G$. In fact:
     %
     \begin{enumerate}
         \item Let $H,H'$ be subgroups of a group $G$. Prove that $H \union H'$ is a subgroup of $G$ only if $H \subseteq H'$ or $H' \subseteq H$.
         \item On the other hand, let $H_0 \subseteq H_1 \subseteq H_2 \subseteq \cdots$ be subgroups of a group $G$. Prove that $\bigunion_{i \geq 0} H_i$ \emph{is} a subgroup of $G$.
     \end{enumerate}
-\end{exerciseframed*}
+\end{exerciseframed}
 
 \begin{solution}
 \begin{solutionsec}
@@ -332,6 +533,36 @@
     
     \item Write $H = \bigunion_{i \geq 0} H_i$. If $g,h \in H$, then $g \in H_i$ and $h \in H_j$ for some $i,j \in \naturals$.\footnote{The natural numbers include zero.} Hence $g,h \in H_i \union H_j = H_{i \join j} \subseteq H$. We furthermore have $g\inv \in H_i \subseteq H$.
 \end{solutionsec}
+\end{solution}
+
+
+\begin{exerciseframed}[7]
+    Show that \emph{inner} automorphisms (cf. Exercise~4.8) form a subgroup of $\Aut(G)$; this subgroup is denoted $\Inn(G)$. Prove that $\Inn(G)$ is cyclic if and only if $\Inn(G)$ is trivial if and only if $G$ is abelian. Deduce that if $\Aut(G)$ is cyclic, then $G$ is abelian.
+\end{exerciseframed}
+
+\begin{solution}
+    It is clear that $\Inn(G)$ is a subgroup of $\Aut(G)$. Assume that $\Inn(G)$ is cyclic, and let $a \in G$ be such that $\gamma_a$ generates $\Inn(G)$. For $g \in G$ we then have $\gamma_g = \gamma_a^n = \gamma_{a^n}$ for some $n \in \ints$. Hence
+    %
+    \begin{equation*}
+        gag\inv
+            = \gamma_g(a)
+            = \gamma_{a^n}(a)
+            = a^n a a^{-n}
+            = a,
+    \end{equation*}
+    %
+    so $a$ commutes with every $g \in G$. For $b \in G$ we thus have
+    %
+    \begin{equation*}
+        \gamma_g(b)
+            = \gamma_{a^n}(b)
+            = a^n b a^{-n}
+            = b,
+    \end{equation*}
+    %
+    so $\gamma_g$ is the identity map for every $g \in G$. Therefore $\Inn(G)$ is trivial, which is obviously equivalent to $G$ being abelian.
+
+    Finally, if $\Aut(G)$ is cyclic then Propositions~6.9 and 6.11 imply that $\Inn(G)$ is also cyclic. But then $G$ is abelian.
 \end{solution}
 
 
