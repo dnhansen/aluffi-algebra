@@ -1186,7 +1186,7 @@ Exercise~8.14 is solved by the same argument.
 \section{Group actions}
 
 \begin{remark}
-    We elaborate on the orbit-stabiliser theorem (Proposition~9.9). Let $G$ be a group with a transitive left-action on a set $A$, and fix an element $a \in A$. We define an equivalence relation on $G$ by letting $g_1 \sim g_2$ if and only if $g_1 a = g_2 a$. This is the case just when $g_1\inv g_2 a = a$, i.e. when $g_1\inv g_2 \in \stab_G(a)$. Since $e_g \in \stab_G(a)$ we see that $\sim$ agrees with the equivalence relation induced by $\stab_G(a)$ as a subgroup of $G$.
+    We elaborate on the orbit-stabiliser theorem (Proposition~9.9). Let $G$ be a group with a transitive left-action on a set $A$, and fix an element $a \in A$. We define an equivalence relation on $G$ by letting $g_1 \sim g_2$ if and only if $g_1 a = g_2 a$. This is the case just when $g_1\inv g_2 a = a$, i.e. when $g_1\inv g_2 \in \stab_G(a)$. Since $e_G \in \stab_G(a)$ we see that $\sim$ agrees with the equivalence relation induced by $\stab_G(a)$ as a subgroup of $G$.
 
     Next notice that the map $\phi \colon G \to A$ given by $\phi(g) = ga$ has the property that $\phi(g_1) = \phi(g_2)$ if and only if $g_1 \sim g_2$. Furthermore, since $G$ acts transitively on $A$, $\phi$ is also surjective. Thus $\phi$ induces a bijection $\tilde\phi \colon G/{\sim} \to A$.
 
@@ -1498,31 +1498,60 @@ Exercise~8.14 is solved by the same argument.
         s \iota(n+1)
             = s(\iota(n) + 1_S)
             = (\iota(n) + 1_S)s
-            = \iota(n+1).
+            = \iota(n+1)s.
     \end{equation*}
     %
     The extension to $n \in \ints$ is obvious.
 
     We can also give a more structural argument: Let $A$ be a subset of a ring $R$, and let $\gen{A}$ denote the smallest subring of $R$ that contains $A$. Explicitly, this is the collection of finite sums of finite products of elements in $A$ or their additive inverses, including the empty sum $0_R$ and the empty product $1_R$.
 
-    If $\phi \colon R \to S$ is a ring homomorphism, then we claim that $\phi(\gen{A}) = \gen{\phi(A)}$. The inclusion $\supseteq$ is obvious, so consider the other inclusion. If $s \in \phi(\gen{A})$, then $s = \phi(r)$ for some $r \in \gen{A}$. Hence
+    If $\phi \colon R \to S$ is a ring homomorphism, then we claim that $\phi(\gen{A}) = \gen{\phi(A)}$. The inclusion $\supseteq$ is obvious, so consider the other inclusion. If $-A = \set{-a}{a \in A}$ is the set of additive inverses of elements in $A$, then clearly $\gen{A \union -A} = \gen{A}$. Since $\phi$ is a homomorphism we also have
+    %
+    \begin{equation*}
+        \gen{\phi(A \union -A)}
+            = \gen{\phi(A) \union -\phi(A)}
+            = \gen{\phi(A)}.
+    \end{equation*}
+    %
+    Thus we may assume that $-A \subseteq A$. If $s \in \phi(\gen{A})$, then $s = \phi(r)$ for some $r \in \gen{A}$. Hence
     %
     \begin{equation*}
         r
-            = \sum_{i=1}^n a_{i1} \cdots a_{ik_i},
+            = \sum_{i=1}^n a_{i1} \cdots a_{ik_i}
     \end{equation*}
     %
-    where the $a_{ij}$ are either elements in $A$ or their additive inverses, and $n$ and $k_i$ are positive integers. It follows that
+    for appropriate $a_{ij} \in A $ and positive integers $n$ and $k_i$. It follows that
     %
     \begin{equation*}
         s = \phi(r)
-            = \sum_{i=1}^n \phi(a_{i1}) \cdots \phi(a_{ik_i}).
+            = \sum_{i=1}^n \phi(a_{i1}) \cdots \phi(a_{ik_i}),
     \end{equation*}
     %
-    If $a_{ij} \in A$, then $\phi(a_{ij}) \in \phi(A)$. Otherwise $-a_{ij} \in A$ so $\phi(a_{ij}) = -\phi(-a_{ij}) \in \gen{\phi(A)}$. In total, $s \in \gen{\phi(A)}$ as claimed.
+    so $s \in \gen{\phi(A)}$ as claimed.
 
     Now we apply this to the above situation. As mentioned, $s$ commutes with $\iota(1)$. The set of elements of $S$ with which $s$ commute (i.e. the centraliser of $s$, cf. \exref{3.2.10}) is a subring containing $\iota(1)$, hence it contains $\gen{\iota(1)} = \iota(\gen{1}) = \iota(\ints)$ as desired.
 \end{remark*}
+
+
+\begin{remark}
+    We elaborate on the claim that Proposition~2.7 is a \enquote{ring analogue} of Cauchy's theorem. The latter say that any group $G$ acts faithfully on some set, namely itself by left multiplication. In other words, there is an injective group homomorphism
+    %
+    \begin{equation*}
+        \sigma \colon G \to \Aut_\catSet(G).
+    \end{equation*}
+    %
+    Notice that the automorphisms are on the \emph{set} $G$. Since $\sigma$ is injective we may identify $G$ with a subgroup of $\Aut_\catSet(G)$.
+
+    Similarly, we recall that if $G$ is an abelian group, then $\End_\catAb(G)$ is a ring, where the multiplication is given by function composition. The statement of Proposition~2.7 is that there is an injective ring homomorphism
+    %
+    \begin{equation*}
+        \lambda \colon R \to \End_\catAb(R).
+    \end{equation*}
+    %
+    And just as $\sigma(g)$ is left-multiplication by $g \in G$ in the \emph{group} $G$ considered as a \emph{set}, $\lambda(r) = \lambda_r$ is left-multiplication by $r \in R$ in the \emph{ring} $R$ considered as an \emph{abelian group}. The fact that multiplication does not make $R$ into a group is captured by the fact that $\lambda$ maps $R$ into the set of all endomorphisms of $R$, and not just the automorphisms.
+
+    We might view $\sigma$ as providing a sort of \enquote{prototype} for group actions: To obtain more general actions we consider group homomorphisms $\sigma \colon G \to \Aut_\catSet(A)$, where $A$ is \emph{any} set. If we consider such a map $\sigma$ as belonging to the set $A$, then we arrive at concept of \emph{$G$-sets}. Transferring this interpretation to rings, we might contemplate actions $\lambda \colon R \to \End_\catAb(M)$ for any abelian group $M$. Similarly thinking of $\lambda$ as belonging to the group $M$, this is precisely what defines an $R$-module structure on $M$.
+\end{remark}
 
 
 \begin{exerciseframed}[3.2.2]
@@ -1731,7 +1760,7 @@ Exercise~8.14 is solved by the same argument.
 
 \begin{solution}
 \begin{solutionsec}
-    \item x
+    \item Let $\iota \colon \ints \to \rationals$ be the inclusion map. Then $\iota(n\ints) = n\ints$, but this is clearly not an ideal in $\rationals$.
     
     \item Since $J$ is a subgroup of $(R,+)$, $\phi(J)$ is also a subgroup of $(S,+)$. If $b \in \phi(J)$ and $s \in S$, then there exist $a \in J$ and $r \in R$ such that $b = \phi(a)$ and $s = \phi(r)$. But then
     %
@@ -1749,18 +1778,57 @@ Exercise~8.14 is solved by the same argument.
 \end{solution}
 
 
+\begin{exerciseframed}[3.3.5]
+    Let $J$ be a \emph{two-sided} ideal of the ring $\calM_n(R)$ of $n \times n$ matrices over a ring $R$. Prove that a matrix $A \in \calM_n(R)$ belongs to $J$ if and only if the matrices obtained by placing any entry of $A$ in any position, and $0$ elsewhere, belong to $J$.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $E_{ij} \in \calM_n(R)$ denote the matrix with $(E_{ij})_{kl} = \delta_{ik} \delta_{jl}$, i.e. the matrix with a $1$ in the $(i,j)$-th entry and $0$ elsewhere. For $A = (a_{ij}) \in \calM_n(R)$ we then have
+    %
+    \begin{equation*}
+        E_{ij} A E_{kl} = a_{jk} E_{il}.
+    \end{equation*}
+    %
+    The matrix on the right-hand side is precisely of the type described, and every matrix such described can we written on this form. If $A \in J$, then since $J$ is a two-sided ideal, all matrices on the form $a_{jk} E_{il}$ also lie in $J$. Since $A$ is a sum of matrices on this form, the converse also holds. This proves the claim.
+\end{solution}
+
+
+\begin{exerciseframed}[3.3.6]
+    Let $J$ be a two-sided ideal of the ring $\calM_n(R)$ of $n \times n$ matrices over a ring $R$, and let $I \subseteq R$ be the set of $(1,1)$ entries of matrices in $J$. Prove that $I$ is a two-sided ideal of $R$ and $J$ consists precisely of those matrices whose entries all belong to $I$.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $a \in I$ and $r \in R$. Then $a$ is the $(1,1)$-th entry of some matrix in $J$. By \exref{3.3.5} the matrix $aE_{11}$ also belongs to $J$, and hence so does the product $(aE_{11})(rE_{11}) = arE_{11}$. Thus $ar \in I$, and we similarly find that $ra \in I$, so $I$ is a two-sided ideal.
+
+    If $A = (a_{ij}) \in \calM_n(R)$ is a matrix whose entries all belong to $I$, then the matrices $a_{ij} E_{11}$ all lie in $J$. By \exref{3.3.5} so do the matrices $a_{ij} E_{ij}$, and since $A$ is a sum of these matrices we also have $A \in J$. Conversely, if $A = (a_{ij}) \in J$, then also $a_{ij} E_{11} \in J$ by \exref{3.3.5}. But then $a_{ij} \in I$.
+\end{solution}
+
+
 \begin{exerciseframed}[3.3.8]
     Prove that a nonzero ring $R$ is a division ring if and only if its only left-ideals and right-ideals are $\{0\}$ and $R$.
 
     In particular, a nonzero commutative ring $R$ is a field if and only if the only ideals of $R$ are $\{0\}$ and $R$.
 \end{exerciseframed}
 %
-We have added the assumption that $R$ be nonzero since the zero ring is not a field, yet $(0)$ and $(1)$ are its only ideals (indeed they both coincide with the ring itself). Furthermore, Aluffi does not require division rings to be nonzero (cf. Definition 1.13), but he seems to assume this elsewhere so we do so as well.
+We have added the assumption that $R$ be nonzero since the zero ring is not a field, yet $(0)$ and $(1)$ are its only (left- or right-) ideals (indeed they both coincide with the ring itself). Furthermore, Aluffi does not require division rings to be nonzero (cf. Definition 1.13), but he seems to assume this elsewhere so we do so as well.
 
 \begin{solution}
     Assume that $R$ is a division ring, and let $I \neq (0)$ be a left-ideal of $R$. If $a \in I$ then also $1 = a\inv a \in I$, so $I = R$. Similarly for right-ideals.
 
-    Conversely, assume that $\{0\}$ and $R$ are the only left-ideals and right-ideals of $R$. If $a \in R$ is nonzero, then $Ra$ and $aR$ are left- and right-ideals of $R$ different from $\{0\}$. But then we must have $Ra = aR = R$, so $1$ lies in both ideals. Thus there are elements $r_1, r_2 \in R$ such that $r_1 a = 1 = a r_2$, hence $a$ is a unit (and in fact $r_1 = r_2$).
+    Conversely, assume that $\{0\}$ and $R$ are the only left-ideals and right-ideals of $R$. If $a \in R$ is nonzero, then $Ra$ and $aR$ are left- and right-ideals of $R$ different from $\{0\}$. But then we must have $Ra = aR = R$, so $1$ lies in both ideals. Thus there are elements $r_1, r_2 \in R$ such that $r_1 a = 1 = a r_2$, hence $a$ is a unit (and of course $r_1 = r_2$).
+\end{solution}
+
+
+\begin{exerciseframed}[3.3.9]
+    Counterpoint to \exref{3.3.8}: It is \emph{not} true that a (nonzero) ring $R$ is a division ring if and only if its only two-sided ideals are $\{0\}$ and $R$. A nonzero ring with this property is said to be \emph{simple}; by \exref{3.3.8}, fields are the only simple \emph{commutative} rings.
+
+    Prove that $\calM_n(\reals)$ is simple.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $J \neq (0)$ be a two-sided ideal of $\calM_n(\reals)$, and let $I$ be the set of $(1,1)$-th entries of matrices in $J$. Since $J \neq (0)$ there is a matrix in $J$ with a nonzero entry. By \exref{3.3.5} there is then matrix in $J$ with a nonzero $(1,1)$-th entry, so $I$ contains this element, and $I \neq (0)$.
+    
+    By \exref{3.3.6}, $I$ is an ideal in $\reals$, and since $\reals$ is a field we must have $I = (1)$. Again by \exref{3.3.6}, $J$ must contain all matrices in $\calM_n(\reals)$, so $J = (1)$. Thus $\calM_n(\reals)$ is simple.
 \end{solution}
 
 
@@ -1990,10 +2058,10 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     %
     \begin{equation*}
         f_i(x)
-            = (x-a) q(x) + r
+            = (x-a) q_i(x) + r_i
     \end{equation*}
     %
-    for some $q(x) \in R[x]$ and $r \in R$. Evaluating in $x = a$ we find that $r = f_i(a)$, so the claim follows.
+    for some $q_i(x) \in R[x]$ and $r_i \in R$. Evaluating in $x = a$ we find that $r_i = f_i(a)$, so the claim follows.
 
     \item Consider the evaluation map $\phi \colon R[x] \to R$ given by $f(x) \mapsto f(a)$. This is surjective (since it is constant on constant polynomials) with $\ker\phi = (x-a)$, so the first isomorphism theorem implies that
     %
@@ -2062,7 +2130,7 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     %
     \begin{enumerate}[label=(\roman*)]
         \item Assume that $I_1 \cdots I_r \subseteq P$; prove that $I_j \subseteq P$ for some $j$.
-        \item By (i), if $P \supseteq \bigintersect_{j=1}^r I_j$, then $P$ contains one of the ideals $I_j$. Prove or disprove: if $P \supseteq \bigintersect_{i=1}^\infty I_j$, then $P$ contains one of the ideals $I_j$.
+        \item By (i), if $P \supseteq \bigintersect_{j=1}^r I_j$, then $P$ contains one of the ideals $I_j$. Prove or disprove: if $P \supseteq \bigintersect_{j=1}^\infty I_j$, then $P$ contains one of the ideals $I_j$.
     \end{enumerate}
 \end{exerciseframed}
 
@@ -2074,12 +2142,23 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     %
     \begin{equation*}
         \bigintersect_{n=3}^\infty n\ints
-            = (0)
+            = 0\ints
             \subseteq 2\ints,
     \end{equation*}
     %
     but none of the $n\ints$ are contained in $2\ints$.
 \end{solutionsec}
+\end{solution}
+
+
+\begin{exerciseframed}[3.4.20]
+    Let $M$ be a two-sided ideal in a (not necessarily commutative) ring $R$. Prove that $M$ is maximal if and only if $R/M$ is a simple ring (cf. \exref{3.3.9}).
+\end{exerciseframed}
+
+\begin{solution}
+    Aluffi does not provide a definition of maximal ideals in noncommutative rings, so we give one: We say that a two-sided ideal $I \neq (1)$ of a ring $R$ is \emph{maximal} if, for every two-sided ideal $J \subseteq R$, $I \subseteq J$ implies that either $I = J$ or $J = R$. In other words, $I$ is maximal with respect to set inclusion among all proper two-sided ideals of $R$.
+
+    With this definition, the claim follows as in the proof of Proposition~4.11 from the one-to-one correspondence, preserving inclusion, between ideals of $R/M$ and ideals of $R$ containing $M$.
 \end{solution}
 
 
@@ -2180,12 +2259,35 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 \end{remark}
 
 
-\begin{exerciseframed}[3.5.5]
-    Let $R$ be a ring, viewed as an $R$-module over itself, and let $M$ be an $R$-module. Prove that $\Hom_\catRMod(R,M) \cong M$ as $R$-modules
+\begin{exerciseframed}[3.5.4]
+    Let $R$ be a ring. A nonzero $R$-module $M$ is \emph{simple} (or \emph{irreducible}) if its only submodules are $\{0\}$ and $M$. Let $M, N$ be simple modules, and let $\phi \colon M \to N$ be a homomorphism of $R$-modules. Prove that either $\phi = 0$ or $\phi$ is an isomorphism.
 \end{exerciseframed}
 
 \begin{solution}
-    Define a map $\alpha \colon \Hom_\catRMod(R,M) \to M$ by $\alpha(\phi) = \phi(1_R)$. This is easily seen to be a module homomorphism. For $m \in M$ define a map $\beta_m \colon R \to M$ by $\beta_m(r) = rm$, which is clearly a module homomorphism, and further define $\beta \colon M \to \Hom_\catRMod(R,M)$ by $\beta(m) = \beta_m$. For $\phi \in \Hom_\catRMod(R,M)$ and $r \in R$ we have
+    Assume that $\phi \neq 0$. The image of $\phi$ is a submodule of $N$, but since $\phi \neq 0$ it cannot be $\{0\}$. Hence it must be $N$, so $\phi$ is surjective. Similarly, the kernel of $\phi$ is a submodule of $N$, but since $\phi \neq 0$ it cannot be $M$. Thus it must be $\{0\}$, so $\phi$ is injective. In total, $\phi$ is bijective hence an isomorphism.
+\end{solution}
+
+
+\begin{exerciseframed}[3.5.5]
+    Let $R$ be a commutative ring, viewed as an $R$-module over itself, and let $M$ be an $R$-module. Prove that $\Hom_\catRMod(R,M) \cong M$ as $R$-modules.
+\end{exerciseframed}
+%
+Recall (cf. §5.3) that if $M$ and $N$ are modules over a (not necessarily commutative ring) $R$, then $\Hom_\catRMod(M,N)$ is an abelian group, but that we need $R$ to be commutative for this to also be a module in general.
+
+\begin{solution}
+    Define a map $\alpha \colon \Hom_\catRMod(R,M) \to M$ by $\alpha(\phi) = \phi(1_R)$. This is easily seen to be a module homomorphism. For $m \in M$ define a map $\beta_m \colon R \to M$ by $\beta_m(r) = rm$, which is clearly a module homomorphism, and further define $\beta \colon M \to \Hom_\catRMod(R,M)$ by $\beta(m) = \beta_m$. This is also a module homomorphism: For $m,m' \in M$ and $r,s \in R$ we have
+    %
+    \begin{equation*}
+        \beta(rm+m')(s)
+            = \beta_{rm+m'}(s)
+            = s(rm+m')
+            = r(sm) + sm'
+            = (r\beta(m) + \beta(m'))(s),
+    \end{equation*}
+    %
+    so $\beta(rm+m') = r\beta(m) + \beta(m')$.
+    
+    For $\phi \in \Hom_\catRMod(R,M)$ and $r \in R$ we have
     %
     \begin{equation*}
         \beta_{\phi(1_R)}(r)
@@ -2193,11 +2295,11 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
             = \phi(r),
     \end{equation*}
     %
-    so $\beta(\phi(1)) = \phi$. It follows that
+    so $\beta(\phi(1_R)) = \phi$. It follows that
     %
     \begin{equation*}
         (\beta \circ \alpha)(\phi)
-            = \beta(\phi(1))
+            = \beta(\phi(1_R))
             = \phi.
     \end{equation*}
     %
@@ -2212,6 +2314,8 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     \end{equation*}
     %
     Thus $\beta$ is the inverse (in $\catSet$) of $\alpha$, hence a module homomorphism. In total, $\alpha$ is an isomorphism in $\catRMod$.
+
+    More simply put, each homomorphism $R \to M$ is multiplication by $m$ for some $m \in M$.
 \end{solution}
 
 
@@ -2273,6 +2377,47 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     %
     for $r \in R$ and $\phi \in \End_\catRMod(M)$. Furthermore, since $\phi$ is a module homomorphism we also have $\lambda_r \circ \phi = \phi \circ \lambda_r$, so the image of $\lambda$ lies in the centre of $\End_\catRMod(M)$.
 \end{solutionsec}
+\end{solution}
+
+
+\begin{exerciseframed}[3.5.11]
+    Let $R$ be a commutative ring, and let $M$ be an $R$-module. Prove that there is a bijection between the set of $R[x]$-module structures (extending the given $R$-module structure) on $M$ and $\End_\catRMod(M)$.
+\end{exerciseframed}
+%
+This result says that, given an $R$-module structure on $M$, the only thing needed to extend this to an $R[x]$-module structure is to fix what the action of $x$ is. If we think of $R[x]$ the ring generated by $R$ along with an element $x$, it makes sense that the $R[x]$-module structure should be \enquote{generated} by $R$ and some endomorphism of $M$ (respecting the $R$-module structure, it turns out).
+
+\begin{solution}
+    The $R$-module structure on $M$ is a ring homomorphism
+    %
+    \begin{equation*}
+        \sigma \colon R \to \End_\catAb(M).
+    \end{equation*}
+    %
+    Given an $R$-module homomorphism $\phi \colon M \to M$, it is easy to see that $\phi \circ \sigma(r) = \sigma(r) \circ \phi$ for all $r \in R$. Example~2.3 then yields a unique ring homomorphism
+    %
+    \begin{equation*}
+        \overline\sigma \colon R[x] \to \End_\catAb(M)
+    \end{equation*}
+    %
+    extending $\sigma$ and sending $x$ to $\phi$, i.e. an $R[x]$-module structure on $M$ extending the given $R$-module structure $\sigma$. This defines a map
+    %
+    \begin{equation*}
+        \Phi \colon \End_\catRMod(M)
+            \to \Hom_\catRing(R[x], \End_\catAb(M))
+    \end{equation*}
+    %
+    sending $\sigma$ to $\overline\sigma$, and by the uniqueness above $\Phi$ is injective.
+
+    Conversely, let $\tau \colon R[x] \to \End_\catAb(M)$ be an $R[x]$-module structure on $M$ extending $\sigma$. Then $\phi = \tau(x) \colon M \to M$ is a ring homomorphism, and we claim that it is in fact an $R$-module homomorphism. For\footnote{The expression $rx$ denotes the product in $R[x]$ of the polynomials $r$ and $x$, and similarly for $xr$.} $rx = xr$ in $R[x]$ for all $r \in R$, so since $\tau$ is a ring homomorphism we have
+    %
+    \begin{equation*}
+        \tau(r) \circ \phi
+            = \tau(rx)
+            = \tau(xr)
+            = \phi \circ \tau(r).
+    \end{equation*}
+    %
+    But then $\tau = \Phi(\phi)$ by the uniqueness of $\overline\sigma$ above, so $\Phi$ is also surjective, hence a bijection as claimed.
 \end{solution}
 
 
