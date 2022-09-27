@@ -18,13 +18,13 @@
 % \usepackage{latex-sty/amalgsymbol}
 
 % Fonts
-\usepackage{amssymb}
 \usepackage[largesmallcaps]{kpfonts}
 \DeclareSymbolFontAlphabet{\mathrm}{operators} % https://tex.stackexchange.com/questions/40874/kpfonts-siunitx-and-math-alphabets
 \linespread{1.06}
 \let\mathfrak\undefined
 \usepackage{eufrak}
 \usepackage{inconsolata}
+% \usepackage{amssymb}
 
 % Hyperlinks
 \usepackage{hyperref}
@@ -55,6 +55,10 @@
 % Lists
 \usepackage{enumitem}
 \setenumerate[0]{label=\normalfont(\alph*)}
+\setlist{  
+  listparindent=\parindent,
+  parsep=0pt,
+}
 
 % Bibliography
 \usepackage[backend=biber, style=authoryear, maxcitenames=2, useprefix]{biblatex}
@@ -82,6 +86,9 @@
 \newcommand{\strucS}{\mathfrak{S}}
 \DeclarePairedDelimiter{\gen}{\langle}{\rangle} % Generating set
 \newcommand{\frakL}{\mathfrak{L}}
+\newcommand{\frakN}{\mathfrak{N}}
+\newcommand{\frakA}{\mathfrak{A}}
+\newcommand{\frakB}{\mathfrak{B}}
 \newcommand{\ab}{\mathit{ab}}
 
 \DeclareMathOperator{\im}{im}
@@ -93,16 +100,25 @@
 \newcommand{\scat}[1]{\mathbf{#1}} % category supposed to be small
 \newcommand{\ncat}[1]{\mathbf{#1}} % named categories like Set, Top
 
+\newcommand{\scatC}{\scat{C}}
+
 \newcommand{\catSet}{\ncat{Set}} % Category of sets
 \newcommand{\catGrp}{\ncat{Grp}} % Category of groups
 \newcommand{\catAb}{\ncat{Ab}} % Category of abelian groups
 \newcommand{\catRing}{\ncat{Ring}} % Category of rings
+\newcommand{\catCRing}{\ncat{CRing}} % Category of commutative rings
+\newcommand{\catFld}{\ncat{Fld}} % Category of fields
 
 \newcommand{\catMod}[1]{{#1\text{-}\scat{Mod}}}
 \newcommand{\catRMod}{\catMod{R}}
 
+\newcommand{\catAlg}[1]{{#1\text{-}\scat{Alg}}}
+\newcommand{\catRAlg}{\catAlg{R}}
+
 \newcommand{\End}{\mathrm{End}}
 \newcommand{\Hom}{\mathrm{Hom}}
+
+\DeclareMathOperator{\chr}{char}
 
 
 %% Framed exercise environment
@@ -188,6 +204,26 @@
 
 \usepackage{caption} % Links to figures jump correctly
 \Crefname{figure}{Figure}{Figures}
+
+
+\newenvironment{displaytheorem}{%
+	\begin{displayquote}\itshape%
+}{%
+	\end{displayquote}%
+}
+
+
+\newcommand{\upset}{\operatorname{\uparrow}}
+\newcommand{\downset}{\operatorname{\downarrow}}
+\newcommand{\matgroup}[3]{\mathrm{#1}_{#2}(#3)}
+\newcommand{\GL}[2]{\matgroup{GL}{#1}{#2}}
+\newcommand{\SL}[2]{\matgroup{SL}{#1}{#2}}
+\newcommand{\catGSet}[1][G]{{#1\text{-}\catSet}}
+\newcommand{\frakI}{\mathfrak{I}}
+\newcommand{\field}{\mathbb{F}}
+\let\bigcoprod\coprod
+\renewcommand{\coprod}{\sqcup}
+
 
 \begin{document}
 
@@ -362,6 +398,133 @@
 
 \section[The category Grp][The category $\catGrp$]{The category $\catGrp$}
 
+\begin{remarkbreak}[Universal algebra]
+    Let $A$ be a set and let $n \in \naturals$. An \emph{operation on $A$} is a set function $A^n \to A$. The set $A^0 \cong 1$ is a singleton and is only determined up to isomorphism in $\catSet$. The number $n$ is called the operation's \emph{arity}, and we say that the operation is \emph{$n$-ary}. A $0$-ary operation is also called a \emph{constant}. If $c \colon \{*\} \to A$ is a constant, then instead of $c(*)$ we simply write $c$.
+    
+    An \emph{algebra} is a pair $\frakA = \langle A, F \rangle$, where $A$ is a set\footnote{Many authors require $A$ to be nonempty, e.g. Manzano and Bergman} and $F$ is a collection (of arbitrary cardinality) of operations on $A$. Writing $F = \set{f_i}{i \in I}$ for some index set $I$, the \emph{(similarity) type} of $\frakA$ is the function $\rho \colon I \to \naturals$ where $\rho(i)$ is the arity of $f_i$. If $I$ is a finite set, then writing $I = \{1, \ldots, k\}$ we display the type of an algebra by the tuple $\langle \rho(1), \ldots, \rho(k) \rangle$, and we also refer to this tuple as the type of the algebra. Notice that if any operation in $F$ is a constant, then $A$ must be nonempty.
+
+    Let $\frakA = \langle A, F \rangle$ and $\frakB = \langle B, G \rangle$ be algebras of the same similarity type $\rho \colon I \to \naturals$, and write $F = \set{f_i}{i \in I}$ and $G = \set{g_i}{i \in I}$. A set function $\phi \colon A \to B$ is called a \emph{homomorphism} from $\frakA$ to $\frakB$ if
+    %
+    \begin{equation*}
+        \phi \left( f_i(a_1, \ldots, a_{\rho(i)}) \right)
+            = g_i \left( \phi(a_1), \ldots, \phi(a_{\rho(i)}) \right)
+    \end{equation*}
+    %
+    for all $i \in I$ and all $a_1, \ldots, a_{\rho(i)} \in A$. And this is equivalent to the diagram (in $\catSet$)
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            A^n
+                \ar[r, "\phi \times \cdots \times \phi"]
+                \ar[d, "f_i", swap]
+            & B^n
+                \ar[d, "g_i"] \\
+            A
+                \ar[r, "\phi", swap]
+            & B
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commuting for all $i \in I$. In the case where $\rho(i) = 0$ we interpret the $0$-fold product of $\phi$ with itself as the unique map $1 \to 1$, and the above square is equivalent to the triangle
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=small]
+            & 1
+                \ar[dl, "f_i", swap]
+                \ar[dr, "g_i"] \\
+            A
+                \ar[rr, "\phi", swap]
+            && B
+        \end{tikzcd}
+    \end{equation*}
+    %
+    Then $f_i$ and $g_i$ are constants, and this diagram means that $\phi(f_i) = g_i$, i.e. that $\phi$ preserves this constant.
+
+    By pasting together two of the above types of diagrams, it is easy to see that function composition preserves homomorphisms. Since the identity on each algebra is obviously a homomorphism, each similarity type gives rise to a category.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[Images and preimages of subalgebras]
+    Let $\frakA = \langle A, \calF^\frakA \rangle$ and $\frakB = \langle B, \calF^\frakB \rangle$ be algebras of the same type $\rho \colon \calF \to \naturals$, where $\calF$ is a family of operation symbols. Further let $S \subseteq A$ and $T \subseteq B$ be subalgebras, and let $\phi \colon \frakA \to \frakB$ a homomorphism.
+
+    We first claim that $\phi(S)$ is a subalgebra of $\frakB$. Consider $f \in \calF$ and let $n = \rho(f)$. For any $y_1, \ldots, y_n \in \phi(S)$ there exist $x_1, \ldots, x_n \in S$ such that $\phi(x_i) = y_i$ for $i = 1, \ldots n$. Then $f^\frakA(x_1, \ldots, x_n) \in S$ since $S$ is a subalgebra, and because $\phi$ is a homomorphism we have
+    %
+    \begin{equation*}
+        f^\frakB(y_1, \ldots, y_n)
+            = f^\frakB \bigl( \phi(x_1), \ldots, \phi(x_n) \bigr)
+            = \phi \bigl( f^\frakA(x_1, \ldots, x_n) \bigr)
+            \in \phi(S)
+    \end{equation*}
+    %
+    as required.
+
+    Next we claim that $\phi\preim(T)$ is either empty (if this is not allowed in the definition of an algebra) or a subalgebra of $\frakA$. If $x_1, \ldots, x_n \in \phi\preim(T)$, then $\phi(x_1), \ldots, \phi(x_n) \in T$. Hence
+    %
+    \begin{equation*}
+        \phi \bigl( f^\frakA(x_1, \ldots, x_n) \bigr)
+            = f^\frakB \bigl( \phi(x_1), \ldots, \phi(x_n) \bigr)
+            \in T
+    \end{equation*}
+    %
+    since $T$ is a subalgebra. Hence $f^\frakA(x_1, \ldots, x_n) \in \phi\inv(T)$ as claimed. Furthermore, if there is a nullary symbol $f$ in $\calF$, then $\phi\preim(T)$ is nonempty since it must contain the image of $f^\frakA$.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[Homomorphisms and generating subalgebras]
+    \label{rem:generating-subalgebra}
+    If $\frakA = \langle A, F \rangle$ is an algebra and $S \subseteq A$, then we denote the smallest subalgebra of $\frakA$ containing $S$ by $\gen{S}$, or $\gen{S}_{\frakA}$ if needed.
+
+    Often we are interested in studying a family of algebras of the same type (groups, rings, modules over a fixed ring, etc.). In this case we fix a set $\calF$ of \emph{operation symbols} and a similarity type $\rho \colon \calF \to \naturals$. An algebra of this type is then an algebra on the form $\frakA = \langle A, \calF^\frakA \rangle$, where $\calF^\frakA$ is an \emph{interpretation} of the symbols in $\calF$. That is a set $\set{f^\frakA}{f \in \calF}$ of operations on $A$ such that $f^\frakA$ has arity $\rho(f)$.
+
+    Let $\frakA = \langle A, \calF^\frakA \rangle$ and $\frakB = \langle B, \calF^\frakB \rangle$ be algebras of the same type, where $\calF$ is a family of operation symbols. If $\phi \colon \frakA \to \frakB$ is a homomorphism and $S \subseteq A$, then we claim that $\gen{\phi(S)}_\frakB = \phi(\gen{S}_\frakA)$. The inclusion \enquote{$\subseteq$} is obvious since the image of a subalgebra is a subalgebra. For the other inclusion, first define $S_0 = S$ and
+    %
+    \begin{equation*}
+        S_{n+1}
+            = S_n \union \set[\big]{f^\frakA(a_1, \ldots, a_k)}{a_1, \ldots, a_k \in S_n \text{ and } f \in \calF}
+    \end{equation*}
+    %
+    for $n \in \naturals$. Then clearly $\gen{S}_\frakA = \bigunion_{n\in\naturals} S_n$. Since function images respect unions, it suffices to show that $\phi(S_n) \subseteq \gen{\phi(S)}_\frakB$ for all $n \in \naturals$. This is obvious for $n = 0$. Next assume that the inclusion holds for some $n \in \naturals$, let $f \in \calF$ have rank $k$, and let $a_1, \ldots, a_k \in S_n$. Then
+    %
+    \begin{equation*}
+        \phi \bigl( f^\frakA(a_1, \ldots, a_k) \bigr)
+            = f^\frakB \bigl( \phi(a_1), \ldots, \phi(a_k) \bigr)
+            \in \gen{\phi(S)}_\frakB
+    \end{equation*}
+    %
+    by induction, since each $\phi(a_i)$ lies in $\phi(S_n)$.
+\end{remarkbreak}
+
+
+\begin{remark}
+    The universal algebra definition of groups is as follows: First, a \emph{semigroup} is an algebra $\langle S, \,\cdot\, \rangle$, where $\cdot$ is a binary operation (in infix notation), satisfying the associative law
+    %
+    \begin{equation*}
+        x \cdot (y \cdot z)
+            = (x \cdot y) \cdot z.
+    \end{equation*}
+    %
+    A \emph{monoid} is an algebra $\langle M, \,\cdot\,, e \rangle$, where $e$ is a constant, such that $\langle M, \,\cdot\, \rangle$ is a semigroup, and which satisfies the identities
+    %
+    \begin{equation*}
+        x \cdot e = x
+        \quad \text{and} \quad
+        e \cdot x = x.
+    \end{equation*}
+    %
+    Finally, a \emph{group} is an algebra $\langle G, \,\cdot\,, \iota, e \rangle$, where $\iota$ is a unary operation, such that $\langle G, \,\cdot\,, e \rangle$ is a monoid, and which satisfies
+    %
+    \begin{equation*}
+        x \cdot \iota(x)
+            = e
+            = \iota(x) \cdot x.
+    \end{equation*}
+    %
+    We usually denote the operation $\cdot$ by concatenation, and we write $\iota(x) = x\inv$.
+
+    For a map $\phi \colon G \to H$ between groups, it turns out that for $\phi$ to be a group homomorphism it is sufficient that $\phi$ commutes with the group operation. This is obviously also the case for semigroups, but for monoids we do require it to respect both the group operation and preserve the identity.
+\end{remark}
+
+
 \begin{exerciseframed}[2.3.3]
     Show that if $G,H$ are \emph{abelian} groups, then $G \prod H$ satisfies the universal property for coproducts in $\catAb$.
 \end{exerciseframed}
@@ -505,6 +668,12 @@
 
 \section{Group homomorphisms}
 
+\begin{remarkbreak}[Cyclic groups]
+    We prove that a group $G$ is generated by a single element if and only if it is cyclic. The \enquote{if} part is clear, so assume that $G$ is generated by some element $g$ and consider the exponential map $\epsilon_g \colon \ints \to G$ given by $\epsilon_g(n) = g^n$. This is clearly a surjective group homomorphism, so if it is injective then $G \cong \ints$, and if it is trivial then $G \cong 1$.
+    
+    Otherwise choose $m_1 < m_2$ such that $g^{m_1} = g^{m_2}$. Then $g^{m_2 - m_1} = e$, so let $m$ be the smallest positive integer such that $g^m = e$. It follows that the kernel of $\epsilon_g$ is $m\ints$, so in this case $G \cong \ints/m\ints$.
+\end{remarkbreak}
+
 \begin{exerciseframed}[2.4.1]
     Check that the function $\pi_m^n$ defined in §4.1 is well-defined and makes the diagram commute. Verify that it is a group homomorphism. % Why is the hypothesis $m \mid n$ necessary?
 \end{exerciseframed}
@@ -596,6 +765,40 @@
 \end{solution}
 
 
+\begin{exerciseframed}[2.4.14]
+    Prove that the order of the group of automorphisms of a cyclic group $C_n$ is the number of positive integers $r < n$ that are relatively prime to $n$. (This is called \emph{Euler's $\phi$-function}; cf. \exref{2.6.14}.)
+\end{exerciseframed}
+
+\begin{solution}
+    We use additive notation. Let $\phi \in \Aut_\catGrp(\ints/n\ints)$ be an automorphism, and let $k \in \ints$. Then
+    %
+    \begin{equation*}
+        \phi([k])
+            = k \phi([1]),
+    \end{equation*}
+    %
+    so every automorphism (indeed every \emph{endo}morphism) is given by multiplication by some element $\phi([1])$. Next notice that since $\phi$ is injective, we must have $\phi([1]) \in (\ints/n\ints)^*$, otherwise we would have $\phi([k]) = [0]$ for some $k \neq 0$. Hence the map
+    %
+    \begin{align*}
+        \mu \colon (\ints/n\ints)^* &\to \Aut_\catGrp(\ints/n\ints), \\
+        k &\mapsto \mu_k,
+    \end{align*}
+    %
+    where $\mu_k$ is multiplication by $k$, is surjective if it is well-defined. But it is, since $\mu_k\inv = \mu_{k\inv}$. It is also clearly injective, which proves the desired claim.
+
+    In fact $\mu$ is a group homomorphism, since
+    %
+    \begin{equation*}
+        \mu_{k+l}(x)
+            = (k+l)x
+            = kx + lx
+            = \mu_k(x) + \mu_l(x),
+    \end{equation*}
+    %
+    hence a group isomorphism.
+\end{solution}
+
+
 \section{Free groups}
 
 \begin{exerciseframed}[2.5.3]
@@ -615,8 +818,6 @@
     so we must have $j(a) \neq j(b)$, and thus $j$ is injective.
 \end{solution}
 
-\let\bigcoprod\coprod
-\renewcommand{\coprod}{\amalg}
 
 \begin{exerciseframed}[2.5.8]
     Prove that $F(A \coprod B) = F(A) * F(B)$ for all sets $A,B$.
@@ -745,6 +946,8 @@
 \end{remark}
 
 
+% Exercise II.6.2: Reference in IV.1.20
+
 \begin{exerciseframed}[2.6.4]
     Let $G$ be a group, and let $g \in G$. Verify that the image of the exponential map $\epsilon_g \colon \ints \to G$ is a cyclic group (in the sense of Definition~4.7).
 \end{exerciseframed}
@@ -837,6 +1040,58 @@
     be a finitely generated subgroup of $\rationals$, and let $m = \lcm(q_1, \ldots, q_n)$. Then each $p_i/q_i$ is an integer multiple of $1/m$, and so $G \subseteq \gen{1/m}$. But every subgroup of a cyclic group is cyclic, so $G$ is cyclic.
 
     Since $\rationals$ is not cyclic (cf. \exref{2.4.4}), it is not finitely generated.
+\end{solution}
+
+\newcommand{\divides}{\mid}
+
+\begin{exerciseframed}[2.6.14]
+    If $m$ is a positive integer, denote by $\phi(m)$ the number of positive integers $r < m$ that are relatively prime to $m$; this is called \emph{Euler's $\phi$- (or \textquote{totient}) function}. In other words, $\phi(m)$ is the order of the group $(\ints/m\ints)^*$; cf. Proposition 2.6. Put together the following observations:
+    %
+    \begin{enumerate}
+        \item $\phi(m)$ equals the number of generators of $C_m$,
+
+        \item every element of $C_n$ generates a subgroup of $C_n$,
+
+        \item the discussion following Proposition 6.11 (in particular, every subgroup of $C_n$ is isomorphic to $C_m$ for some $m \divides n$),
+    \end{enumerate}
+    %
+    to obtain a proof of the formula
+    %
+    \begin{equation*}
+        \sum_{m > 0, m \divides n} \phi(m) = n.
+    \end{equation*}
+\end{exerciseframed}
+
+\begin{solution}
+    \begin{solutionsec}
+        \item This is just Corollary~2.5, which says that $[n]_m$ generates $\ints/m\ints$ iff $\gcd(m,n) = 1$.
+
+        \item This is obvious.
+
+        \item In additive notation, every subgroup $H$ of $\ints/n\ints$ is cyclic, hence isomorphic to $\ints/m\ints$ for some $m$. Lagrange's theorem then implies that $m \divides n$.
+
+        Alternatively, Proposition~6.11 says that $H$ is generated by $[d]_n$ for some $d \divides n$. But then
+        %
+        \begin{equation*}
+            m
+                \defn \abs{ [d]_n }
+                = \frac{n}{\gcd(d,n)}
+        \end{equation*}
+        %
+        by Proposition~2.3, and $m$ is also a divisor of $n$.
+    \end{solutionsec}
+    
+    We now prove the formula. Denote by $G_m$ the subset of $C_n$ that generate a subgroup of order $m > 0$. Then $\card{G_m} = \phi(m)$ by (a). Notice that every element in $C_n$ lies in some $G_m$ by (b), and that the $G_m$ are disjoint so that they form a partition of $C_n$. Finally, $G_m = \emptyset$ unless $m \divides n$ by (c). In total we have
+    %
+    \begin{equation*}
+        n
+            = \card{C_n}
+            = \sum_{m > 0} \card{G_m}
+            = \sum_{m > 0, m \divides n} \card{G_m}
+            = \sum_{m > 0, m \divides n} \phi(m),
+    \end{equation*}
+    %
+    as desired.
 \end{solution}
 
 
@@ -1016,8 +1271,8 @@
 \end{remark}
 
 
-\begin{remark}
-    Given a group $G$ and subgroups $H$ and $K$ with $H$ normal, Proposition~8.11 ensures that $HK$ is a subgroup of $G$, $H$ is normal in $HK$, and $H \intersect K$ is a normal subgroup of $K$. A part of the lattice of subgroups of $G$ is seen in \cref{fig:lattice-of-subgroups}.
+\begin{remarkbreak}[Second isomorphism theorem]
+    Given a group $G$ and subgroups $H$ and $K$ with $H$ normal, Proposition~8.11 ensures that $HK$ is a subgroup of $G$, $H$ is normal in $HK$, and $H \intersect K$ is a normal subgroup of $K$. The relevant sublattice of the lattice $\frakL(G)$ of subgroups of $G$ is seen in \cref{fig:lattice-of-subgroups}.
     
     \begin{figure}[!h]
         \centering
@@ -1032,7 +1287,7 @@
             \draw (HK) -- (K) -- (HinterK) -- (H) -- (HK);
             \draw (HinterK) -- (e);
         \end{tikzpicture}
-        \caption{Partial lattice of subgroups of $G$.}
+        \caption{Sublattice of $\frakL(G)$.}
         \label{fig:lattice-of-subgroups}
     \end{figure}
 
@@ -1062,7 +1317,101 @@
     \end{equation*}
     %
     In fact, this evidently holds whenever $K$ is \emph{any} subset of $G$.
-\end{remark}
+\end{remarkbreak}
+
+
+
+
+\begin{remarkbreak}[Modular lattices]
+    Let $(\frakL,\join,\meet)$ be a lattice. An element $x \in \frakL$ is said to be \emph{modular} if\footnote{There are a couple of different definitions of modularity of \emph{elements}, but these are all equivalent for modularity of \emph{lattices}. Some authors use only one of the following two properties in the definition.}
+    %
+    \begin{enumerate}[label=(\arabic*)]
+        \item $a \join (x \meet c) = (a \join x) \meet c$ for all $a,c \in \frakL$ with $a \leq c$, and
+
+        \item $x \join (b \meet c) = (x \join b) \meet c$ for all $b,c \in \frakL$ with $x \leq c$.
+    \end{enumerate}
+    %
+    Furthermore, $\frakL$ itself is said to be modular if every element of $\frakL$ is modular. If $G$ is a group, then a subgroup $H$ of $G$ is said to be modular if it is a modular element of the lattice $\mathfrak{L}(G)$ of subgroups of $G$.
+
+    We first prove the \emph{modular property of groups}: If $H,K,L$ are subgroups of $G$ with $H \leq L$, then $HK \intersect L = H (K \intersect L)$. The inclusion \enquote{$\supseteq$} is clear since
+    %
+    \begin{equation*}
+        H (K \intersect L)
+            \subseteq HK \intersect HL
+            = HK \intersect L.
+    \end{equation*}
+    %
+    For the other inclusion, let $h \in H$ and $k \in K$ be such that $hk \in L$. Then since also $h \in L$ we have
+    %
+    \begin{equation*}
+        k
+            = h\inv hk
+            \in L,
+    \end{equation*}
+    %
+    so $k \in K \intersect L$. In total, $hk \in H(K \intersect L)$.
+
+    A subgroup $H$ of $G$ is said to be \emph{permutable} (or \emph{quasinormal}) in $G$ if it commutes with every subgroup $K$ of $G$, i.e. $HK = KH$. Every normal subgroup of $G$ is thus permutable in $G$. We claim that $H$ is permutable in $G$ only if $H$ is modular. First notice that $HK = H \join K$ since $H$ and $K$ commute. Since also $H \intersect K = H \meet K$, the modularity property immediately implies the second of the two criteria. To prove the first criterion, it suffices to show that $H$ and $K \intersect L$ also commute if $H$ and $K$ do. If $h \in H$ and $k \in K \intersect L$, then since $H$ and $K$ commute there exist $h' \in H$ and $k' \in K$ such that $hk = k'h'$. But then notice that
+    %
+    \begin{equation*}
+        k'
+            = (hk)(h')\inv,
+    \end{equation*}
+    %
+    which lies in $L$. Hence $H(K \intersect L) \subseteq (K \intersect L)H$, and the opposite inclusion follows similarly.
+
+    Next we claim that the set $\frakN(G)$ of normal subgroups of $G$ forms a modular sublattice of $\frakL(G)$. If $M$ and $N$ are normal subgroups of $G$, then $MN$ is also normal, since for $g \in G$ we have
+    %
+    \begin{equation*}
+        g(MN)
+            = (gM)N
+            = (Mg)N
+            = M(gN)
+            = M(Ng)
+            = (MN)g.
+    \end{equation*}
+    %
+    Furthermore, the subgroup $M \intersect N$ is also normal, since
+    %
+    \begin{equation*}
+        g (M \intersect N)
+            = gM \intersect gN
+            = Mg \intersect Ng
+            = (M \intersect N) g.
+    \end{equation*}
+    %
+    Hence $\frakN(G)$ is indeed a sublattice. We showed above that every permutable (hence every normal) subgroup is modular, so $\frakN(G)$ is modular.
+
+    Finally we provide some intuition for the definition of modularity in lattices. If $\frakL$ is a lattice and $a,x,b \in \frakL$ with $a \leq b$, we can \enquote{project} $x$ onto the up set $\upset a = \set{y \in \frakL}{a \leq y}$ by joining it with $a$, i.e. $a \join x$. Afterwards we may further project it onto the down set $\downset b = \set{y \in \frakL}{y \leq b}$ by meeting it with $b$, i.e. $(a \join x) \meet b$. Notice that since $a \leq b$, we still have $a \leq (a \join x) \meet b$. Hence we obtain a projection of $x$ onto the interval
+    %
+    \begin{equation*}
+        [a,b]
+            = (\upset a) \intersect (\downset b)
+            = \set{y \in \frakL}{a \leq y \leq b}.
+    \end{equation*}
+    %
+    Dually we might have instead used the projection $a \join (x \meet b)$, i.e. reversing the order of the two projections. A lattice is modular just when these two projections always give the same result, so in some sense projection onto an interval only really makes sense in a modular lattice.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[A \enquote{rank-nullity theorem} for finite groups]
+    Let $\phi \colon G \to H$ be a group homomorphism, where $G$ is a finite group. This induces an isomorphism $\tilde\phi \colon G/\ker\phi \to \phi(G)$. Hence
+    %
+    \begin{equation*}
+        \card{G}
+            = \card{\ker\phi} \, [G : \ker\phi]
+            = \card{\ker\phi} \, \card{\phi(G)}.
+    \end{equation*}
+    %
+    In particular we see that the order of the image of $\phi$, which is a subgroup of the \emph{codomain}, divides the order of the \emph{domain}. Compare the rank-nullity theorem from linear algebra:
+    %
+    \begin{equation*}
+        \dim V
+            = \dim \ker T + \dim T(V),
+    \end{equation*}
+    %
+    where $T \colon V \to W$ is a linear map.
+\end{remarkbreak}
 
 
 \begin{exerciseframed}[2.8.1]
@@ -1102,9 +1451,6 @@
 \end{solution}
 
 
-\newcommand{\matgroup}[3]{\mathrm{#1}_{#2}(#3)}
-\newcommand{\GL}[2]{\matgroup{GL}{#1}{#2}}
-\newcommand{\SL}[2]{\matgroup{SL}{#1}{#2}}
 
 \begin{exerciseframed}[2.8.8]
     Prove that $\SL{n}{\reals}$ is a \emph{normal subgroup} of $\GL{n}{\reals}$ and \enquote{compute}
@@ -1135,6 +1481,77 @@ Exercise~8.14 is solved by the same argument.
 
 \begin{solution}
     We show that the map $g \mapsto g^2$ is surjective, and since $G$ is finite it suffices to show that it is injective. For $g,h \in G$ with $g^2 = h^2$ we have $(g\inv h)^2 = e$. But the order of $g\inv h$ cannot be even since $\card{G}$ is odd, so $g\inv h = e$, i.e. $g = h$.
+\end{solution}
+
+
+\begin{exerciseframed}[2.8.16]
+    Generalize Fermat's little theorem to congruences modulo arbitrary (that is, possibly nonprime) integers.
+\end{exerciseframed}
+
+\begin{solution}
+    We prove \emph{Euler's theorem}:
+    %
+    \begin{displaytheorem}
+        If $n$ and $a$ are coprime positive integers, then
+        %
+        \begin{equation*}
+            a^{\phi(n)} \equiv 1 \pmod n.
+        \end{equation*}
+    \end{displaytheorem}
+    %
+    The class $[a]_n$ lies in the multiplicative group $(\ints/n\ints)^*$ which has order $\phi(n)$, so Lagrange's theorem implies that
+    %
+    \begin{equation*}
+        [a]_n^{\phi(n)}
+            = [1]_n
+    \end{equation*}
+    %
+    as claimed.
+\end{solution}
+
+
+\begin{exerciseframed}[2.8.17]
+    Assume $G$ is a finite abelian group, and let $p$ be a prime divisor of $\card{G}$. Prove that there exists an element in $G$ of order $p$.
+\end{exerciseframed}
+
+\begin{solution}
+    We argue by induction in $\card{G}$. If $\card{G} = 1$ then $\card{G}$ has no prime divisors, hence the claim is trivial. Assume then that $\card{G} > 1$, and let $g \neq e$ be an element of $G$. We claim that the cyclic group $\gen{g}$ contains an element of prime order. Let $q$ be a prime divisor of $\ord{g}$ and write $\ord{g} = qd$. The element $g^d$ then has order
+    %
+    \begin{equation*}
+        \ord{g^d}
+            = \frac{\lcm(\ord{g},d)}{d}
+            = \frac{\ord{g}}{d}
+            = q
+    \end{equation*}
+    %
+    by Proposition~1.13 as claimed. If $q = p$ then we are done. If $q \neq p$ then let $H = \gen{g^d}$ and consider the quotient\footnote{Here we use that $G$ is abelian, since then $\gen{g^d}$ is a normal subgroup.} $G/H$. This has order $\card{G}/q < \card{G}$, and since $p$ divides $\card{G}/q$ it contains an element $aH$ of order $p$ by induction. By Proposition~4.1, $p = \ord{aH}$ divides $\ord{a}$, so write $\ord{a} = pk$. Then $a^k$ has order $p$ as desired.
+\end{solution}
+
+
+\begin{exerciseframed}[2.8.19]
+    Let $G$ be a finite group, and let $d$ be a proper divisor of $\card{G}$. Is it necessarily true that there exists an element of $G$ of order $d$? Give a proof or a counterexample.
+\end{exerciseframed}
+
+\begin{solution}
+    The (abelian!) group $C_2 \times C_2 \times C_2$ is of order $8$, but all its nontrivial elements are of order $2$.
+\end{solution}
+
+
+\begin{exerciseframed}[2.8.20]
+    Assume $G$ is a finite abelian group, and let $d$ be a divisor of $\card{G}$. Prove that there exists a subgroup $H \subseteq G$ of order $d$.
+\end{exerciseframed}
+
+\begin{solution}
+    We argue by induction in $\card{G}$. If $\card{G} = 1$ then this is obvious, so assume that $\card{G} > 1$ and let $d$ be a divisor of $\card{G}$. If $d$ is prime, then the claim follows directly from \exref{2.8.17}, so assume that $d$ is composite and let $d = kp$ with $p$ prime. Then there is an element $h \in G$ of order $p$ by \exref{2.8.17}, and the quotient $G/\gen{h}$ has order $k < \card{G}$. Induction yields a subgroup of $G/\gen{h}$ of order $k$, and by Proposition~8.9 this subgroup is on the form $H/\gen{h}$ for some subgroup $H$ of $G$. Finally notice that
+    %
+    \begin{equation*}
+        \card{H}
+            = [H:\gen{h}] \, \ord{h}
+            = kp
+            = d
+    \end{equation*}
+    %
+    as desired.
 \end{solution}
 
 
@@ -1226,7 +1643,6 @@ Exercise~8.14 is solved by the same argument.
 \end{solution}
 
 
-\newcommand{\catGSet}[1][G]{{#1\text{-}\catSet}}
 
 \begin{exerciseframed}[2.9.8]
     For $G$ a group, verify that $\catGSet$ is indeed a category, and verify that the isomorphisms in $\catGSet$ are precisely the equivariant bijections.
@@ -1411,6 +1827,27 @@ Exercise~8.14 is solved by the same argument.
 
 \section{Definition of ring}
 
+\begin{remark}
+    Let $(R,+,\cdot)$ be a ring. The definition includes the hypothesis that $(R,+)$ be an \emph{abelian} group, but if $R$ has a multiplicative identity this is actually superfluous. The distributive laws imply that
+    %
+    \begin{equation*}
+        (1+1)(r+s)
+            = 1(r+s) + 1(r+s)
+            = r + s + r + s,
+    \end{equation*}
+    %
+    and that
+    %
+    \begin{equation*}
+        (1+1)(r+s)
+            = (1+1)r + (1+1)s
+            = r + r + s + s,
+    \end{equation*}
+    %
+    and then cancellation implies that $r + s = s + r$.
+\end{remark}
+
+
 \begin{exerciseframed}[3.1.5]
     Let $R$ be a ring. If $a,b$ are zero-divisors in $R$, is $a+b$ necessarily a zero-divisor?
 \end{exerciseframed}
@@ -1463,7 +1900,7 @@ Exercise~8.14 is solved by the same argument.
             = \sum_{i=0}^{N} \binom{N}{i} a^i b^{N-i}.
     \end{equation*}
     %
-    Choose $m,n \in \naturals$ such that $a^m = 0$ and $b^n = 0$, and let $N = m+n$. Then if $i < m$ we have $N - i \geq n$, so it follows that $(a + b)^N = 0$.
+    Choose $m,n \in \naturals$ such that $a^m = 0$ and $b^n = 0$, and let $N = m+n$. Then if $i < m$ we have $N - i \geq n$ (i.e., each term in the sum contains either a large power of $a$ or of $b$), so it follows that $(a + b)^N = 0$.
 
     \item It is necessary. Consider the matrices
     %
@@ -1481,18 +1918,50 @@ Exercise~8.14 is solved by the same argument.
         \end{pmatrix}
     \end{equation*}
     %
-    in $\calM_2(\reals)$. Then $a^2 = b^2 = 0$, but $(a + b)^2$ is the identity matrix, so $a + b$ is not nilpotent.
+    in $\calM_2(\reals)$. Then $a^2 = b^2 = 0$, but $a+b$ is invertible and hence not nilpotent: indeed, $(a+b)^2$ is the identity matrix.
 \end{solutionsec}
 \end{solution}
 
+
+\begin{exerciseframed}[3.1.17]
+    Explain in what sense $R[x]$ agrees with the monoid ring $R[\naturals]$.
+\end{exerciseframed}
+
+\begin{solution}
+    As a group, $R[\naturals]$ is just the direct sum $R^{\oplus\naturals}$ of the abelian groups $(R, +)$, which agrees with the definition of $R[x]$ as a group. As for the multiplication in $R[\naturals]$, this is given by
+    %
+    \begin{equation*}
+        \biggl( \sum_{n \in \naturals} a_n \cdot n \biggr)
+            \cdot \biggl( \sum_{n \in \naturals} b_n \cdot n \biggr)
+            = \sum_{n \in \naturals} \sum_{n = n_1 + n_2} (a_{n_1} b_{n_2}) \cdot n.
+    \end{equation*}
+    %
+    The multiplication in $R[x]$ is given by
+    %
+    \begin{equation*}
+        \biggl( \sum_{n \in \naturals} a_n x^n \biggr)
+            \cdot \biggl( \sum_{n \in \naturals} b_n x^n \biggr)
+            = \sum_{n \in \naturals} \sum_{n = n_1 + n_2} (a_{n_1} b_{n_2}) x^n,
+    \end{equation*}
+    %
+    which agrees with the multiplication on $R[\naturals]$ after substituting $n \to x^n$.
+\end{solution}
 
 
 \section[The category Ring][The category $\catRing$]{The category $\catRing$}
 
 \begin{remark*}
-    Let $S$ be a ring and $s \in S$. According to Example~2.2 there exists a unique ring homomorphism $\iota \colon \ints[x] \to S$ that sends $x$ to $s$. This is guaranteed by the proof of Proposition~2.1 as long as $s$ commutes with every element in $\iota(\ints)$. We claim that this is in fact the case:
+    Let $S$ be a ring and $s \in S$. According to Example~2.2 there exists a unique ring homomorphism $\phi \colon \ints[x] \to S$ that sends $x$ to $s$. This is guaranteed by the proof of Proposition~2.1 as long as $s$ commutes with every element in $\iota(\ints)$, where $\iota \colon \ints \to S$ is the unique ring homomorphism. We claim that this is in fact the case:
     
-    Clearly $s$ commutes with $\iota(1) = 1_S$, so assume that it commutes with $\iota(n)$ for some $n \in \naturals$. It follows that
+    The \emph{set function} $\phi$ always exists. In order for it to be a ring homomorphism, notice that $s$ indeed needs only commute with $\iota(\ints)$, since the elements in $\phi(\ints[x])$ are on the form
+    %
+    \begin{equation*}
+        \phi \biggl( \sum_{n \in \naturals} a_n x^n \biggr)
+            = \sum_{n \in \naturals} \phi(a_n) \phi(x)^n
+            = \sum_{n \in \naturals} \iota(a_n) s^n
+    \end{equation*}
+    %
+    for $a_n \in \ints$. Clearly $s$ commutes with $\iota(1) = 1_S$, so assume that it commutes with $\iota(n)$ for some $n \in \naturals$. It follows that
     %
     \begin{equation*}
         s \iota(n+1)
@@ -1503,38 +1972,82 @@ Exercise~8.14 is solved by the same argument.
     %
     The extension to $n \in \ints$ is obvious.
 
-    We can also give a more structural argument: Let $A$ be a subset of a ring $R$, and let $\gen{A}$ denote the smallest subring of $R$ that contains $A$. Explicitly, this is the collection of finite sums of finite products of elements in $A$ or their additive inverses, including the empty sum $0_R$ and the empty product $1_R$.
-
-    If $\phi \colon R \to S$ is a ring homomorphism, then we claim that $\phi(\gen{A}) = \gen{\phi(A)}$. The inclusion $\supseteq$ is obvious, so consider the other inclusion. If $-A = \set{-a}{a \in A}$ is the set of additive inverses of elements in $A$, then clearly $\gen{A \union -A} = \gen{A}$. Since $\phi$ is a homomorphism we also have
-    %
-    \begin{equation*}
-        \gen{\phi(A \union -A)}
-            = \gen{\phi(A) \union -\phi(A)}
-            = \gen{\phi(A)}.
-    \end{equation*}
-    %
-    Thus we may assume that $-A \subseteq A$. If $s \in \phi(\gen{A})$, then $s = \phi(r)$ for some $r \in \gen{A}$. Hence
-    %
-    \begin{equation*}
-        r
-            = \sum_{i=1}^n a_{i1} \cdots a_{ik_i}
-    \end{equation*}
-    %
-    for appropriate $a_{ij} \in A $ and positive integers $n$ and $k_i$. It follows that
-    %
-    \begin{equation*}
-        s = \phi(r)
-            = \sum_{i=1}^n \phi(a_{i1}) \cdots \phi(a_{ik_i}),
-    \end{equation*}
-    %
-    so $s \in \gen{\phi(A)}$ as claimed.
-
-    Now we apply this to the above situation. As mentioned, $s$ commutes with $\iota(1)$. The set of elements of $S$ with which $s$ commute (i.e. the centraliser of $s$, cf. \exref{3.2.10}) is a subring containing $\iota(1)$, hence it contains $\gen{\iota(1)} = \iota(\gen{1}) = \iota(\ints)$ as desired.
+    We can also give a more structural argument for this final claim based on \cref{rem:generating-subalgebra}: As mentioned, $s$ commutes with $\iota(1)$. The set of elements of $S$ with which $s$ commute (i.e. the centraliser of $s$, cf. \exref{3.2.10}) is a subring containing $\iota(1)$, hence it contains $\gen{\iota(1)} = \iota(\gen{1}) = \iota(\ints)$ as desired.
 \end{remark*}
 
 
+\begin{remarkbreak}[Naturality of $\ints$]
+    The \emph{group} $\ints$ is first constructured as the free group on one generator. It turns out that this is abelian, so we may consider the set $\End_\catAb(\ints)$. If $\phi,\psi \colon \ints \to \ints$ are group homomorphisms, we may define $\phi + \psi$ pointwise by
+    %
+    \begin{equation*}
+        (\phi + \psi)(n) = \phi(n) + \psi(n),
+    \end{equation*}
+    %
+    which makes $\End_\catAb(\ints)$ itself into an abelian group. Composition of elements in $\End_\catAb(\ints)$ makes it into a monoid. To show that it is a ring, we check the distributive laws: First of all,
+    %
+    \begin{equation*}
+        (\phi + \psi) \circ \chi(n)
+            = (\phi + \psi)(\chi(n))
+            = \phi(\chi(n)) + \psi(\chi(n))
+            = \phi \circ \chi(n) + \psi \circ \chi(n).
+    \end{equation*}
+    %
+    Notice that we haven't used that the maps are group homomorphisms. Furthermore,
+    %
+    \begin{equation*}
+        \chi \circ (\phi + \psi)(n)
+            = \chi( \phi(n) + \psi(n) )
+            = \chi(\phi(n)) + \chi(\psi(n))
+            = \chi \circ \phi(n) + \chi \circ \psi(n),
+    \end{equation*}
+    %
+    where the second equality uses that $\chi$ is a homomorphism. Hence $\End_\catAb(\ints)$ is a ring. Finally, Proposition~2.6 shows that $\End_\catAb(\ints)$ is isomorphic to $\ints$ equipped with the usual ring structure, showing that $\End_\catAb(\ints)$ is a commutative ring. But notice that we only use this isomorphism to show that $\End_\catAb(\ints)$ is commutative; its definition is entirely \enquote{natural} and does not depend on the integers as such.
+
+    We may prove that $\End_\catAb(\ints) \cong \ints$ as follows: For $a \in \ints$ define $\alpha_a \colon \ints \to \ints$ by $\alpha_a(n) = an$. This is clearly a group homomorhism. Then define $\psi \colon \ints \to \End_\catAb(\ints)$ by $\psi(a) = \alpha_a$. Notice that
+    %
+    \begin{equation*}
+        (\alpha_a + \alpha_b)(n)
+            = \alpha_a(n) + \alpha_b(n)
+            = an + bn
+            = (a+b)n
+            = \alpha_{a+b}(n)
+    \end{equation*}
+    %
+    and
+    %
+    \begin{equation*}
+        (\alpha_a \circ \alpha_b)(n)
+            = \alpha_a (\alpha_b(n))
+            = a(bn)
+            = (ab)n
+            = \alpha_{ab}(n),
+    \end{equation*}
+    %
+    showing that $\psi$ is a ring homomorphism. Then define a map $\phi \colon \Hom_\catAb(\ints) \to \ints$ by $\phi(\alpha) = \alpha(1)$. Notice that
+    %
+    \begin{equation*}
+        (\phi \circ \psi)(a)
+            = \phi(\alpha_a)
+            = \alpha_a(1)
+            = a,
+    \end{equation*}
+    %
+    and that
+    %
+    \begin{equation*}
+        (\psi \circ \phi)(\alpha)
+            = \psi(\alpha(1))
+            = \alpha_{\alpha(1)},
+    \end{equation*}
+    %
+    and furthermore that $\alpha_{\alpha(1)}(n) = \alpha(1)n = \alpha(n)$ since $\alpha$ is a group homomorphism. Thus $\phi$ and $\psi$ are inverses.
+
+    Aluffi instead proves that $\phi$ is a ring homomorphism, but it seems more natural to prove that $\psi$ is instead. However, Proposition~2.7 is a generalisation of the above whose proof is identical.
+\end{remarkbreak}
+
+
 \begin{remark}
-    We elaborate on the claim that Proposition~2.7 is a \enquote{ring analogue} of Cauchy's theorem. The latter say that any group $G$ acts faithfully on some set, namely itself by left multiplication. In other words, there is an injective group homomorphism
+    We elaborate on the claim that Proposition~2.7 is a \enquote{ring analogue} of Cauchy's theorem. The latter says that any group $G$ acts faithfully on some set, namely itself by left multiplication. In other words, there is an injective group homomorphism
     %
     \begin{equation*}
         \sigma \colon G \to \Aut_\catSet(G).
@@ -1542,7 +2055,7 @@ Exercise~8.14 is solved by the same argument.
     %
     Notice that the automorphisms are on the \emph{set} $G$. Since $\sigma$ is injective we may identify $G$ with a subgroup of $\Aut_\catSet(G)$.
 
-    Similarly, we recall that if $G$ is an abelian group, then $\End_\catAb(G)$ is a ring, where the multiplication is given by function composition. The statement of Proposition~2.7 is that there is an injective ring homomorphism
+    Similarly, we recall that if $G$ is an abelian group, then $\End_\catAb(G)$ is a ring where the multiplication is given by function composition. The statement of Proposition~2.7 is that there is an injective ring homomorphism
     %
     \begin{equation*}
         \lambda \colon R \to \End_\catAb(R).
@@ -1550,7 +2063,7 @@ Exercise~8.14 is solved by the same argument.
     %
     And just as $\sigma(g)$ is left-multiplication by $g \in G$ in the \emph{group} $G$ considered as a \emph{set}, $\lambda(r) = \lambda_r$ is left-multiplication by $r \in R$ in the \emph{ring} $R$ considered as an \emph{abelian group}. The fact that multiplication does not make $R$ into a group is captured by the fact that $\lambda$ maps $R$ into the set of all endomorphisms of $R$, and not just the automorphisms.
 
-    We might view $\sigma$ as providing a sort of \enquote{prototype} for group actions: To obtain more general actions we consider group homomorphisms $\sigma \colon G \to \Aut_\catSet(A)$, where $A$ is \emph{any} set. If we consider such a map $\sigma$ as belonging to the set $A$, then we arrive at concept of \emph{$G$-sets}. Transferring this interpretation to rings, we might contemplate actions $\lambda \colon R \to \End_\catAb(M)$ for any abelian group $M$. Similarly thinking of $\lambda$ as belonging to the group $M$, this is precisely what defines an $R$-module structure on $M$.
+    We might view $\sigma$ as providing a sort of \enquote{prototype} for group actions: To obtain more general actions we consider group homomorphisms $\sigma \colon G \to \Aut_\catSet(A)$, where $A$ is \emph{any} set. If we consider such a map $\sigma$ as belonging to the set $A$, then we arrive at concept of \emph{$G$-sets}. Transferring this interpretation to rings, we might contemplate actions $\lambda \colon R \to \End_\catAb(M)$ for any abelian group $M$. Similarly thinking of $\lambda$ as belonging to the group $M$, this is precisely what defines an $R$-module structure on $M$ (indeed, in analogy with $G\text{-}\catSet$ we could have denoted the category of $R$-modules by $R\text{-}\catAb$ instead of $\catRMod$). % Better commands for G-sets
 \end{remark}
 
 
@@ -1613,7 +2126,7 @@ Exercise~8.14 is solved by the same argument.
              = \sum_{k\in\naturals} \sum_{i+j=k} \alpha(r_i) \alpha(t_j) s^{i+j} \\
             &= \sum_{k\in\naturals} \sum_{i+j=k} \alpha(r_i) s^i \alpha(t_j) s^j
              = \sum_{i\in\naturals} \alpha(r_i) s^i \sum_{j\in\naturals} \alpha(t_j) s^j \\
-            &= \overline\alpha \biggl( \sum_{i\in\naturals} r_i x^i \sum_{j\in\naturals} t_j x^j \biggr).
+            &= \overline\alpha \biggl( \sum_{i\in\naturals} r_i x^i \biggr) \, \overline\alpha \biggl( \sum_{j\in\naturals} t_j x^j \biggr).
     \end{align*}
     %
     Thus $\overline\alpha$ is a homomorphism, and it is clearly unique with the required properties.
@@ -1722,7 +2235,76 @@ Exercise~8.14 is solved by the same argument.
 \end{solution}
 
 
+\begin{exerciseframed}[3.2.12]
+    Consider the inclusion map $\iota \colon \ints \hookrightarrow \rationals$. Describe the cokernel of $\iota$ in $\catAb$ and its cokernel in $\catRing$ (as defined by the appropriate universal property in the style of the one given in §II.8.6).
+\end{exerciseframed}
+
+\begin{solution}
+    In $\catAb$, the cokernel of $\iota$ is the quotient $\rationals/\ints$. This is (isomorphic to) the subgroup of the circle $S^1$ containing the results of rotations by $2\pi r$ radians for rational $r$. This is nontrivial, so $\iota$ is not an epimorphism (indeed it is clearly not surjective).
+
+    If $\phi \colon R \to R'$ is a ring homomorphism, then a cokernel of $\phi$ would seem to be a ring $\coker\phi$ along with a homomorphism $\pi \colon R' \to \coker\phi$ such that, for any ring homomorphism $\alpha \colon R' \to S$ with $\alpha \circ \phi = \alpha \circ 0$, there is a unique homomorphism $\tilde\alpha \colon \coker\phi \to S$ such that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}[row sep=tiny]
+            && S \\
+            R
+                \ar[r, "\phi", shift left]
+                \ar[r, "0", shift right, swap]
+            & R'
+                \ar[ur, "\alpha"]
+                \ar[dr, "\pi", swap, twoheadrightarrow] \\
+            && \coker\phi
+                \ar[uu, "\tilde\alpha", swap, dashed]
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes, where $0$ is a suitable (fixed) map, playing the role of the zero group homomorphism. In $\catRing$ it is not so clear what this map should be, since we cannot simply send everything to zero when $R'$ is nontrivial. In other words, since there is no null object in $\catRing$, there is no canonical way to get it to work using the language of (co)equalisers.
+
+    Using Aluffi's slightly different (but in $\catGrp$ and $\catAb$ equivalent) definition of cokernels, we would instead require that $\pi$ be initial with respect to homomorphisms $\alpha \colon R' \to S$ with $\alpha \circ \phi = 0$. Then $\alpha$ should factor uniquely through $\coker\phi$:
+    %
+    \begin{equation*}
+        \begin{tikzcd}[row sep=tiny]
+            && S \\
+            R
+                \ar[r, "\phi"]
+                \ar[urr, "0", bend left]
+                \ar[drr, "0", bend right, swap]
+            & R'
+                \ar[ur, "\alpha"]
+                \ar[dr, "\pi", swap, twoheadrightarrow] \\
+            && \coker\phi
+                \ar[uu, "\tilde\alpha", swap, dashed]
+        \end{tikzcd}
+    \end{equation*}
+    %
+    Hence we must in particular have $\pi \circ \phi = 0$, but the zero map is only a ring homomorphism if its codomain is zero, so $\coker\phi = 0$. We see that the cokernel of \emph{any} ring homomorphism is the zero ring, so there is no useful concept of cokernel in $\catRing$.
+\end{solution}
+
+
 \section{Ideals and quotient rings}
+
+\begin{remarkbreak}[Ideals and homomorphisms]
+    The image or preimage of a \emph{subring} under a ring homomorphism is a subring, but there is no reason (in universal algebra) to expect e.g. that the kernel of a homomorphism have any sort of special structure: Since a ring has two constants (i.e. nullary operations, namely $0$ and $1$), the subset $\{0\}$ is not generally a subring.
+
+    In the interpretation of an ideal $I$ in a ring $R$ as a subset capable of being \enquote{set equal to zero}, then there seems to be no reason to expect the image of an ideal to also be an ideal. For instance, $2\ints$ is an ideal in $\ints$, but the image $2\ints$ of the inclusion map $\ints \hookrightarrow \rationals$ is not an ideal in $\rationals$, since forcing all even numbers to be zero in $\rationals$ would also force many other numbers to be zero (indeed all numbers since $\rationals$ is a field).
+
+    On the other hand, it seems more natural for kernels to be ideals. If a homomorphism $\phi$ annihilates elements $a$ and $b$, then it should also annihilate all elements on the form $a + b$ or $ra$. If we extend the meaning of \enquote{annihilate} to also allow $\phi$ to map elements into some ideal of its codomain, then it also seems natural enough for the preimage of any ideal to be an ideal.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[Ideals in universal algebra]
+    One might wonder whether there is an algebraic theory of (say, left) ideals. If $I$ is an ideal in a ring $R$, then $I$ is in particular an abelian group $\langle I, +, -, 0 \rangle$ under addition. Furthermore, for $a \in I$ and $r \in R$ we must have $ra \in I$, so each element $r$ in $R$ determines a unitary operation $\lambda_r$ given by $\lambda_r(a) = ra$. Hence an ideal is an algebra
+    %
+    \begin{equation*}
+        \mathfrak{I}
+            = \bigl\langle I, +, -, 0, \langle \lambda_r \mid r \in R \rangle \bigr\rangle
+    \end{equation*}
+    %
+    satisfying the obvious identities, and further satisfying that $I \subseteq R$. We immediately notice that we are only able to construct an algebraic theory of ideals of a \emph{fixed} ring. But this already defeats the purpose since we want a theory of \emph{ideals} and not a theory of \emph{ideals in $R$}.
+
+    However, if we allow $I$ to be any set and not just a subset of $R$, then we arrive precisely at the theory of (left) $R$-modules.
+\end{remarkbreak}
+
 
 \begin{exerciseframed}[3.3.2]
     Let $\phi \colon R \to S$ be a ring homomorphism, and let $J$ be an ideal of $S$. Prove that $I = \phi\preim(J)$ is an ideal of $R$.
@@ -1798,7 +2380,7 @@ Exercise~8.14 is solved by the same argument.
 \end{exerciseframed}
 
 \begin{solution}
-    Let $a \in I$ and $r \in R$. Then $a$ is the $(1,1)$-th entry of some matrix in $J$. By \exref{3.3.5} the matrix $aE_{11}$ also belongs to $J$, and hence so does the product $(aE_{11})(rE_{11}) = arE_{11}$. Thus $ar \in I$, and we similarly find that $ra \in I$, so $I$ is a two-sided ideal.
+    Let $a \in I$ and $r \in R$. Then $a$ is the $(1,1)$-th entry of some matrix in $J$. By \exref{3.3.5} the matrix $aE_{11}$ also belongs to $J$, and hence so does the product $(aE_{11})(rE_{11}) = arE_{11}$ since $J$ is an ideal. Thus $ar \in I$, and we similarly find that $ra \in I$, so $I$ is a two-sided ideal.
 
     If $A = (a_{ij}) \in \calM_n(R)$ is a matrix whose entries all belong to $I$, then the matrices $a_{ij} E_{11}$ all lie in $J$. By \exref{3.3.5} so do the matrices $a_{ij} E_{ij}$, and since $A$ is a sum of these matrices we also have $A \in J$. Conversely, if $A = (a_{ij}) \in J$, then also $a_{ij} E_{11} \in J$ by \exref{3.3.5}. But then $a_{ij} \in I$.
 \end{solution}
@@ -1810,10 +2392,10 @@ Exercise~8.14 is solved by the same argument.
     In particular, a nonzero commutative ring $R$ is a field if and only if the only ideals of $R$ are $\{0\}$ and $R$.
 \end{exerciseframed}
 %
-We have added the assumption that $R$ be nonzero since the zero ring is not a field, yet $(0)$ and $(1)$ are its only (left- or right-) ideals (indeed they both coincide with the ring itself). Furthermore, Aluffi does not require division rings to be nonzero (cf. Definition 1.13), but he seems to assume this elsewhere so we do so as well.
+We have added the assumption that $R$ be nonzero since the zero ring is not a field, yet $\{0\}$ and $R$ are its only (left- or right-) ideals (indeed they both coincide with the ring itself). Furthermore, Aluffi does not require division rings to be nonzero (cf. Definition 1.13), but he seems to assume this elsewhere so we do so as well.
 
 \begin{solution}
-    Assume that $R$ is a division ring, and let $I \neq (0)$ be a left-ideal of $R$. If $a \in I$ then also $1 = a\inv a \in I$, so $I = R$. Similarly for right-ideals.
+    Assume that $R$ is a division ring, and let $I \neq \{0\}$ be a left-ideal of $R$. If $a \in I$ then also $1 = a\inv a \in I$, so $I = R$. Similarly for right-ideals.
 
     Conversely, assume that $\{0\}$ and $R$ are the only left-ideals and right-ideals of $R$. If $a \in R$ is nonzero, then $Ra$ and $aR$ are left- and right-ideals of $R$ different from $\{0\}$. But then we must have $Ra = aR = R$, so $1$ lies in both ideals. Thus there are elements $r_1, r_2 \in R$ such that $r_1 a = 1 = a r_2$, hence $a$ is a unit (and of course $r_1 = r_2$).
 \end{solution}
@@ -1829,6 +2411,8 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     Let $J \neq (0)$ be a two-sided ideal of $\calM_n(\reals)$, and let $I$ be the set of $(1,1)$-th entries of matrices in $J$. Since $J \neq (0)$ there is a matrix in $J$ with a nonzero entry. By \exref{3.3.5} there is then matrix in $J$ with a nonzero $(1,1)$-th entry, so $I$ contains this element, and $I \neq (0)$.
     
     By \exref{3.3.6}, $I$ is an ideal in $\reals$, and since $\reals$ is a field we must have $I = (1)$. Again by \exref{3.3.6}, $J$ must contain all matrices in $\calM_n(\reals)$, so $J = (1)$. Thus $\calM_n(\reals)$ is simple.
+
+    Notice that we only use the fact that $\reals$ is a field, so the same argument shows that $\calM_n(k)$ is simple for any field $k$.
 \end{solution}
 
 
@@ -1838,6 +2422,8 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 
 \begin{solution}
     Let $a \in k$ be nonzero. Then it is a unit, so $\phi(a)$ is a unit in $R$. Since $R$ is nonzero, we must have $\phi(a) \neq 0_R$. It follows that $a \not\in \ker\phi$, so $\phi$ is injective.
+
+    Alternatively, since $R$ is nonzero $\phi$ is nontrivial, $\ker\phi \neq R$. And $\ker\phi$ is an ideal in $k$, so $\ker\phi = \{0\}$ by \exref{3.3.8}.
 \end{solution}
 
 
@@ -1879,6 +2465,50 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 
 
 \section{Ideals and quotients: Remarks and examples. Prime and maximal ideals}
+
+\begin{remarkbreak}[Fields and maximal ideals]
+    If $R$ is a commutative ring and $I \subseteq R$ is any subset, we know that it makes sense to consider the quotient ring $R/I$ only when $I$ is an ideal. By taking the quotient with $I$ we are effectively forcing every element of $I$ to be zero, and only these elements to be zero. First of all we must then have $0 \in I$, and $I$ must also be closed under addition since $0 + 0 = 0$. Clearly $-0 = 0$, so each element in $I$ must also have an additive inverse. Thus $I$ is a group.
+
+    Furthermore, multiplication of any element in $R$ by zero must again yield zero, so $I$ must be closed under multiplication with any element in $R$. This is precisely the definition of an ideal.
+
+    When is it possible to force an element to be zero? If we force a unit $u$ to be zero, then we would intuitively have $1 = u u\inv = 0 u\inv = 0$. If we don't want to end up with the zero ring, then we cannot force units to be zero. In a field every non-zero element is a unit, so fields cannot have any non-trivial ideals.
+
+    Put another way: We \emph{can} force non-units to be zero. By doing this we first of all eliminate some of the non-units entirely, and some of the non-units may become units. For instance, in $\ints$ the number $2$ is not a unit, but in $\ints/3\ints$ the corresponding class $[2]_3$ \emph{is} a unit since $[2]_3 [2]_3 = [4]_3 = [1]_3$. The idea is that by collapsing the ideal $I$ to zero, we are forced to identify a bunch of other elements if their difference lies in $I$. Hence many elements in the original ring $R$ may correspond to the identity $1$ after collapsing $I$ to zero, and so it is easier for a product to equal $1$.
+
+    Let $I$ be a maximal ideal. Then we are not able to force any more elements to be zero without reducing $R$ to the zero ring. Hence $R/I$ in some sense contains the minimal number of non-units. Indeed, if $R/I$ contained \emph{any} non-units whatsoever, say the element $r$, then taking the quotient by $(r)$ removes even more non-units. But we had already removed the maximal amount of non-units, so this is impossible. Hence $R/I$ cannot contain any non-units and is thus a field.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[Lattice of ideals]
+    Let $R$ be a ring. Since $(R,+)$ is a (commutative) group we may consider its lattice $\frakL(R)$ of subgroups. If $H$ and $K$ are subgroups of $(R,+)$, then their join and meet in $\frakL(R)$ are $H + K$ (in additive notation) and $H \intersect K$ respectively. If $I$ and $J$ are ideals in $R$, then they are in particular subgroups, and it is easy to check that $I + J$ and $I \intersect J$ are also ideals. Hence the subset $\frakI(R) \subseteq \frakL(R)$ of ideals is in fact a sublattice.
+
+    In groups we only have one operation with which to combine subgroups. In a ring we have an addition, used above to define $I + J$, but we also have a multiplication: We define the product of the ideals $I$ and $J$ in $R$ by
+    %
+    \begin{equation*}
+        IJ
+            = (I \cdot J)
+            = ( ij \mid i \in I, j \in J ),
+    \end{equation*}
+    %
+    i.e., $IJ$ is the ideal generated by products $ij$ for $i \in I$ and $j \in J$. Notice that $IJ \subseteq I \intersect J$, but that $I$ and $J$ do not generally lie in $IJ$. We give a series of properties of the product of ideals:
+    %
+    \begin{enumerate}
+        \item If $R$ is commutative and $a,b \in R$, then $(a)(b) = (ab)$. Clearly $ab \in (a)(b)$ so $(ab) \subseteq (a)(b)$, and for the opposite inclusion notice that
+        %
+        \begin{equation*}
+            \sum_{i=1}^n (r_i a) (s_i b)
+                = ab \sum_{i=1}^n r_i s_i
+                \in (ab),
+        \end{equation*}
+        %
+        so $(a)(b) \subseteq (ab)$.
+
+        In $\ints$ we have $(a) \intersect (b) = (\lcm(a,b))$, so here $(a)(b) = (a) \intersect (b)$ just when $a$ and $b$ are relatively prime.
+
+        \item If $R$ is a PID, then of course $(a)(b) = (c)$ for some $c$, but as far as I know there is no general relation between $a,b,c$.
+    \end{enumerate}
+\end{remarkbreak}
+
 
 \begin{exerciseframed}[3.4.1]
     Let $R$ be a ring, and let $\{I_\alpha\}_{\alpha \in A}$ be a family of ideals in $R$. We let
@@ -1954,6 +2584,8 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 \begin{exerciseframed}[3.4.5]
     Let $I,J$ be ideals in a commutative ring $R$, such that $I + J = (1)$. Prove that $IJ = I \intersect J$.
 \end{exerciseframed}
+%
+Ideals $I$ and $J$ in a (not necessarily commutative) ring $R$ are said to be \emph{comaximal} if $I + J = R$. A set $\mathcal{I}$ of ideals in $R$ is called \emph{(pairwise) comaximal} if $I$ and $J$ are comaximal for all distinct $I, J \in \mathcal{I}$.
 
 \begin{solution}
     There exist $i \in I$ and $j \in J$ such that $i + j = 1$. For $a \in I \intersect J$ it follows that
@@ -2089,6 +2721,45 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 \end{solution}
 
 
+\begin{exerciseframed}[3.4.12]
+    Let $R$ be a commutative ring and $a_1, \ldots, a_n$ elements of $R$. Prove that
+    %
+    \begin{equation*}
+        \frac{R[x_1, \ldots, x_n]}{(x_1 - a_1, \ldots, x_n - a_n)}
+            \cong R.
+    \end{equation*}
+\end{exerciseframed}
+
+\begin{solution}
+    By \exref{3.4.11} we have
+    %
+    \begin{equation*}
+        \frac{R[x_1, \ldots, x_n]}{(x_1 - a_1, \ldots, x_n - a_n)}
+            \cong \frac{R[x_1, \ldots, x_{n-1}][x_n]}{(x_1 - a_1, \ldots, x_n - a_n)}
+            \cong \frac{R[x_1, \ldots, x_{n-1}]}{(x_1 - a_1, \ldots, x_{n-1} - a_{n-1})},
+    \end{equation*}
+    %
+    and repeating this $n-1$ times yields the claim.
+\end{solution}
+
+
+\begin{exerciseframed}[3.4.13]
+    Let $R$ be an integral domain. For all $k = 1, \ldots, n$ prove that $(x_1, \ldots, x_k)$ is prime in $R[x_1, \ldots, x_n]$.
+\end{exerciseframed}
+
+\begin{solution}
+    By \exref{3.4.12} we have
+    %
+    \begin{equation*}
+        \frac{R[x_1, \ldots, x_n]}{(x_1, \ldots, x_k)}
+            \cong \frac{R[x_{k+1}, \ldots, x_n][x_1, \ldots, x_k]}{(x_1, \ldots, x_k)}
+            \cong R[x_{k+1}, \ldots, x_n],
+    \end{equation*}
+    %
+    which is an integral domain. Hence $(x_1, \ldots, x_k)$ is by definition prime.
+\end{solution}
+
+
 \begin{exerciseframed}[3.4.17]
     Let $K$ be a compact topological space, and let $R$ be the ring of continuous real-valued functions on $K$, with addition and multiplication defined pointwise.
     %
@@ -2196,7 +2867,34 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 
 \section{Modules over a ring}
 
-\begin{remark}
+\begin{remarkbreak}[Modules in universal algebra]
+    Let $R$ be a fixed ring. A (left) $R$-module is an algebra
+    %
+    \begin{equation*}
+        \mathfrak{M} = \bigl\langle M, +, -, 0, \langle \lambda_r \mid r \in R \rangle \bigr\rangle
+    \end{equation*}
+    %
+    such that $\langle M, +, -, 0 \rangle$ is an abelian group, each $\lambda_r$ is a unitary operation, and which satisfies the usual identities. Hence, an $R$-module homomorphism $\phi \colon \mathfrak{M} \to \mathfrak{N}$ (where $\mathfrak{N}$ has underlying set $N$) is a homomorphism of the underlying abelian groups, for which the diagrams
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            M
+                \ar[r, "\phi"]
+                \ar[d, "\lambda_r^{\mathfrak{M}}", swap]
+            & N
+                \ar[d, "\lambda_r^{\mathfrak{N}}"]
+            \\
+            M
+                \ar[r, "\phi", swap]
+            & N
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commute for all $r \in R$.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[$R$-algebras]
     We elaborate on Example~5.6 and the definition of an $R$-algebra in Definition~5.7. Given a ring $S$, left multiplication $\lambda \colon S \to \End_\catAb(S)$ is a ring homomorphism by Proposition~2.7. If $\alpha \colon R \to S$ is a ring homomorphism, we can equip $S$ with the $R$-module structure
     %
     \begin{equation*}
@@ -2256,6 +2954,95 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
     \end{equation*}
     %
     Thus $\alpha(r)$ and $s$ commute as claimed.
+\end{remarkbreak}
+
+\newcommand{\frakS}{\mathfrak{S}}
+
+\begin{remarkbreak}[The category of $R$-algebras]
+    Above we saw two ways of thinking of algebras over a commutative ring $R$. In fact we have at least four ways of thinking about $R$-algebras:
+    %
+    \begin{enumerate}
+        \item An $R$-algebra is a ring homomorphism $\alpha \colon R \to S$ whose image $\alpha(R)$ lies in the centre of $S$. This (even without this latter assumption) induces a module structure on $S$ given by $\lambda \circ \alpha$, where $\lambda$ is left-multiplication in $S$. Hence an $R$-algebra is a ring equipped with an $R$-action.
+
+        \item An $R$-algebra is simultaneously an $R$-module and a ring, and the two structures are compatible: The ring addition and the module addition coincide, and the $R$-action commutes with the ring multiplication. The latter precisely corresponds to the above requirement that $\alpha(R)$ lie in the centre of $S$.
+        
+        \item We may also consider $R$-algebras as algebraic structures in the sense of universal algebra. Thus an $R$-algebra is a structure
+        %
+        \begin{equation*}
+            \frakS
+                = \bigl\langle S, +, \,\cdot\,, -, 0, \langle \lambda_r \mid r \in R \rangle \bigr\rangle,
+        \end{equation*}
+        %
+        such that $\langle S, +, \cdot, -, 0 \rangle$ is a ring, $\langle S, +, -, 0, \langle \lambda_r \mid r \in R \rangle \rangle$ is an $R$-module, and which satisfies the laws
+        %
+        \begin{equation*}
+            \lambda_r(s) \cdot s'
+                = \lambda_r(s \cdot s')
+                = s \cdot \lambda_r(s')
+        \end{equation*}
+        %
+        for all $r \in R$. This is essentially the same as the above.
+
+        \item Finally we may construct the category $\catRAlg$ of $R$-algebras more categorically and see that we recover the above definition. Indeed we may define this category as the subcategory of the coslice category $R/\catRing$ whose objects (which are homomorphisms in $\catRing$) have the property that their image lies in the centre of their codomain.
+        
+        More explicitly, an object in $\catRAlg$ is a ring homomorphism $\alpha \colon R \to S$ such that $\alpha(R)$ lies in the centre of $S$, and an arrow from $\alpha$ to $\beta \colon R \to T$ in $\catRAlg$ is a commutative diagram
+        %
+        \begin{equation*}
+            \begin{tikzcd}[column sep=small]
+                & R
+                    \ar[dl, "\alpha", swap]
+                    \ar[dr, "\beta"]
+                \\
+                S
+                    \ar[rr, "\phi", swap]
+                && T
+            \end{tikzcd}
+        \end{equation*}
+        %
+        in $\catRing$. Since $\phi$ is a ring homomorphism, this means that
+        %
+        \begin{equation*}
+            \phi(rs)
+                = \phi(\alpha(r)s)
+                = \phi(\alpha(r)) \phi(s)
+                = \beta(r) \phi(s)
+                = r \phi(s).
+        \end{equation*}
+        %
+        Hence $\phi$ respects the module structures on $S$ and $T$. Conversely, if $\phi \colon S \to T$ respects both the ring and module structures on $S$ and $T$, then
+        %
+        \begin{equation*}
+            \phi(\alpha(r)) \phi(s)
+                = \phi(\alpha(r)s)
+                = \phi(rs)
+                = r \phi(s)
+                = \beta(r) \phi(s),
+        \end{equation*}
+        %
+        and letting $s = 1_S$ yields $\phi \circ \alpha = \beta$. Hence this definition of $\catRAlg$ is equivalent to the ones above.
+
+        Furthermore, since $R$ is already assumed commutative, the category of \emph{commutative} $R$-algebras may simply be defined as the coslice category $R/\catCRing$.
+    \end{enumerate}
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[Every ring is a $\ints$-algebra]
+    Just as every abelian group is a $\ints$-module, every ring $R$ is a $\ints$-algebra in a unique way: First of all, there is a unique ring homomorphism $\iota \colon \ints \to R$. Thus we only need to verify that $\iota(\ints)$ lies in the centre of $R$. But this is clear since the centre $Z(R)$ of $R$ is a subring (of course containing $1_R$), so
+    %
+    \begin{equation*}
+        \iota(\ints)
+            = \iota(\gen{1})
+            = \gen{\iota(1)}
+            = \gen{1_R}
+            \subseteq Z(R).
+    \end{equation*}
+    %
+    Hence the categories $\catRing$ and $\catAlg{\ints}$ are the same.
+\end{remarkbreak}
+
+
+\begin{remark}
+    In §5.2 we see that $\Hom_\catRMod(M,N)$ is itself an $R$-module if $R$ is commutative. In fact, for any ring $R$ and any set $A$ the set of functions $N^A$ is a module with operations defined pointwise (recall from §II.4.4 that $H^A$ is a group if $H$ is a \emph{commutative} group, which is also the case here). Of course we may then restrict to module homomorphisms $M \to N$, but it is only when $R$ is commutative that this class is closed under scalar multiplication.
 \end{remark}
 
 
@@ -2418,6 +3205,1104 @@ This result says that, given an $R$-module structure on $M$, the only thing need
     \end{equation*}
     %
     But then $\tau = \Phi(\phi)$ by the uniqueness of $\overline\sigma$ above, so $\Phi$ is also surjective, hence a bijection as claimed.
+\end{solution}
+
+
+\section[Products, coproducts, etc., in R-Mod][Products, coproducts, etc., in $\catRMod$]{Products, coproducts, etc., in $\catRMod$}
+
+\begin{remarkbreak}[Free commutative $R$-algebras]
+    In the proof of Proposition~6.4, Aluffi proves that, given a commutative $R$-algebra $S$ and a set function $f \colon A \to S$ from a finite set $A = \{1, \ldots, n\}$, there exists a unique \emph{ring homomorphism} $\phi \colon R[A] \to S$ such that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            R[A]
+                \ar[r, "\phi"]
+            & S
+            \\
+            A
+                \ar[u, "j"]
+                \ar[ur, "f", swap]
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes. He then claims that $\phi$ is automatically an $R$-module homomorphism. Indeed, Aluffi constructs $\phi$ by extending the structure $\alpha \colon R \to S$ making $S$ an $R$-algebra, and thus it is in fact an $R$-module homomorphism: Denoting the $R$-algebra structure on $R[A]$ by $\iota \colon R \to R[A]$ we find that
+    %
+    \begin{equation*}
+        \phi(rm)
+            = \phi(\iota(r)m)
+            = \phi(\iota(r)) \phi(m)
+            = \alpha(r) \phi(m)
+            = r \phi(m)
+    \end{equation*}
+    %
+    for $r \in R$ and $m \in R[A]$. Here we use that $\phi$ is a ring homomorphism, and that $\phi \circ \iota = \alpha$ since $\phi$ extends $\alpha$.
+
+    However, this only shows that $\phi$ is unique among $R$-algebra homomorphisms that extend $\alpha$. If $\psi \colon R[A] \to S$ is any $R$-algebra homomorphism we have
+    %
+    \begin{equation*}
+        \psi(r)
+            = \psi(\iota(r) 1_{R[A]})
+            = \psi(\iota(r)) \psi(1_{R[A]})
+            = \alpha(r),
+    \end{equation*}
+    %
+    now using that $\psi \circ \iota = \alpha$ since $\psi$ is an $R$-algebra homomorphism. But then we see that $\psi$ must extend $\alpha$, and so $\phi$ above is indeed unique.
+\end{remarkbreak}
+
+
+\begin{exerciseframed}[3.6.3]
+    Let $R$ be a ring, $M$ an $R$-module, and $p \colon M \to M$ an $R$-module homomorphism such that $p^2 = p$. (Such a map is called a projection.) Prove that $M = \ker p \oplus \im p$.
+\end{exerciseframed}
+
+\begin{solution}
+    Consider the map $\ker p \oplus \im p \to M$ given by $(n,m) \mapsto n + m$, which is easily seen to be a homomorphism. It has the inverse $m \mapsto (m - p(m), p(m))$, hence is an isomorphism.
+\end{solution}
+
+
+\begin{exerciseframed}[3.6.4]
+    Let $R$ be a ring, and let $n > 1$. View $R^{\oplus (n-1)}$ as a submodule of $R^{\oplus n}$, via the injective homomorphism $R^{\oplus (n-1)} \hookrightarrow R^{\oplus n}$ defined by
+    %
+    \begin{equation*}
+        (r_1, \ldots, r_{n-1})
+            \mapsto (r_1, \ldots, r_{n-1}, 0)
+    \end{equation*}
+    %
+    Give a one-line proof that
+    %
+    \begin{equation*}
+        \frac{R^{\oplus n}}{R^{\oplus (n-1)}}
+            \cong R.
+    \end{equation*}
+\end{exerciseframed}
+
+\begin{solution}
+    This follows from the first isomorphism theorem since the projection $\pi_n \colon R^{\oplus n} \to R$ given by $\pi_n(r_1, \ldots, r_n) = r_n$ is surjective and has kernel $R^{\oplus (n-1)}$.
+\end{solution}
+
+
+\begin{exerciseframed}[3.6.9]
+    Let $R$ be a ring, $F$ a nonzero free $R$-module, and let $\phi \colon M \to N$ be a homomorphism of $R$-modules. Prove that $\phi$ is onto if and only if for all $R$-module homomorphisms $\alpha \colon F \to N$ there exists an $R$-module homomorphism $\beta \colon F \to M$ such that $\alpha = \phi \circ \beta$:
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=tiny]
+            & F
+                \ar[dl, "\beta", swap, dashed]
+                \ar[dr, "\alpha"]
+            \\
+            M
+                \ar[rr, "\phi", swap, two heads]
+            && N
+        \end{tikzcd}
+    \end{equation*}
+    %
+    (Free modules are \emph{projective}, as we will see in Chapter~VIII. See also \cref{rem:projective-modules}.)
+\end{exerciseframed}
+
+\begin{solution}
+    Say that $F = F^R(A)$ for a nonempty set $A$. Assume first that $\phi$ is surjective, and let $\alpha \colon F \to N$ be a homomorphism. For each $n \in \im\alpha$, choose some $m_n \in \phi\preim(\{n\})$, and let $A_n = \alpha\preim(\{n\})$. Notice that the sets $A_n$ constitute a partition of $A$. Then define a set function $f \colon A \to M$ by $f(a) = m_n$ for $a \in A_n$. This extends to a homomorphism $\beta \colon F \to M$. Then notice that, for $a \in A_n$,
+    %
+    \begin{equation*}
+        \phi(\beta(a))
+            = \phi(f(a))
+            = \phi(m_n)
+            = n
+            = \alpha(a),
+    \end{equation*}
+    %
+    so $\phi \circ \beta$ and $\alpha$ agree on $A$, hence on $F$ by the uniqueness part of the universal property of $F$.
+
+    Conversely, let $n \in N$ and define a set function $g \colon A \to N$ by $g(a) = n$ for all $a \in A$. By the universal property of $F$ there exists an $R$-module homomorphism $\alpha \colon F \to N$ extending $g$. Then there further exists a homomorphism $\beta \colon F \to M$ such that $\alpha = \phi \circ \beta$, so $n$ lies in the image of $\phi$. Since $n$ was arbitrary, this shows that $\phi$ is surjective.
+\end{solution}
+
+
+\begin{exerciseframed}[3.6.13]
+    Prove that every homomorphic image of a finitely generated module is finitely generated.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $M$ be a finitely generated $R$-module, and let $\phi \colon M \to N$ be a homomorphism. We may assume that $\phi$ is surjective. Since $M$ is finitely generated, there is an $n \in \naturals$ and a surjective homomorphism $R^{\oplus n} \twoheadrightarrow M$. Composing this with $\phi$ yields a surjective homomorphism $R^{\oplus n} \twoheadrightarrow N$, so $N$ is also finitely generated.
+\end{solution}
+
+
+\begin{exerciseframed}[3.6.14]
+    Prove that the ideal $(x_1, x_2, \ldots)$ of the ring $R = \ints[x_1, x_2, \ldots]$ is not finitely generated (as an ideal, i.e., as an $R$-module).
+\end{exerciseframed}
+
+\begin{solution}
+    Let $A$ be a finite subset of $R$ that generates a module contained in $(x_1, x_2, \ldots)$. In particular, $A$ cannot contain $1$. Furthermore, since $A$ is finite and each element of $A$ is a polynomial, there is a largest $n \in \naturals$ such that $x_n$ appears in a polynomial in $A$. Then it is clear that $x_{n+1} \not\in (x_1, x_2, \ldots)$ since $1 \not\in A$.
+\end{solution}
+
+
+\begin{exerciseframed}[3.6.18]
+    Let $M$ be an $R$-module, and let $N$ be a submodule of $M$. Prove that if $N$ and $M/N$ are both finitely generated, then $M$ is finitely generated.
+\end{exerciseframed}
+
+\begin{solution}
+    Choose $a_1, \ldots, a_m, b_1, \ldots, a_n \in M$ such that
+    %
+    \begin{equation*}
+        \frac{M}{N}
+            = \gen{a_1 + N, \ldots, a_m + N}
+        \quad \text{and} \quad
+        N
+            = \gen{b_1, \ldots, b_n}.
+    \end{equation*}
+    %
+    For $m \in M$ we thus have
+    %
+    \begin{equation*}
+        m + N
+            = \sum_{i=1}^m r_i(a_i + N)
+            = \sum_{i=1}^m r_i a_i + N,
+    \end{equation*}
+    %
+    so $m - \sum_{i=1}^m r_i a_i \in N$. Hence
+    %
+    \begin{equation*}
+        m
+            = \sum_{i=1}^m r_i a_i + \sum_{j=1}^n s_i b_i,
+    \end{equation*}
+    %
+    so $M = \gen{a_1, \ldots, a_m, b_1, \ldots, a_n}$.
+\end{solution}
+
+
+\section{Complexes and homology}
+
+\begin{remarkbreak}[Split exact sequences]
+    \label{rem:split-exact-sequences}
+    If
+    %
+    \begin{equation}
+        \label{eq:short-exact-seq-remark}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & L
+                \ar[r, "\alpha"]
+            & M
+                \ar[r, "\beta"]
+            & N
+                \ar[r]
+            & 0
+        \end{tikzcd}
+    \end{equation}
+    %
+    is exact, then $L \cong \ker\beta$ and $N \cong \coker\alpha$. On the other hand we may immediately extend the exact sequence
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & L
+                \ar[r, "\alpha"]
+            & M,
+        \end{tikzcd}
+    \end{equation*}
+    %
+    which precisely says that $\alpha$ is injective, to the exact sequence
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & L
+                \ar[r, "\alpha"]
+            & M
+                \ar[r]
+            & \coker\alpha
+                \ar[r]
+            & 0.
+        \end{tikzcd}
+    \end{equation*}
+    %
+    These then carry exactly the same information, assuming that $\alpha$ is injective. But this extended sequence also allows us to talk about splitting, so we have ways of characterising both monomorphisms and split monomorphisms using short exact sequences. Of course we may do similarly with epimorphisms.
+
+    Since any sequence on the form \cref{eq:short-exact-seq-remark} is isomorphic to one on the form
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & \ker\beta
+                \ar[r, "\alpha"]
+            & M
+                \ar[r, "\beta"]
+            & \coker\alpha
+                \ar[r]
+            & 0,
+        \end{tikzcd}
+    \end{equation*}
+    %
+    the content of Proposition~7.5 is in fact that this splits iff $\alpha$ has a left-inverse iff $\beta$ has a right-inverse.
+\end{remarkbreak}
+
+
+\newcommand{\catC}{\cat{C}}
+
+\begin{remarkbreak}[Projective modules]
+    \label{rem:projective-modules}
+    In any category $\catC$, an object $P$ is said to be \emph{projective} if, given an epimorphism $e \colon A \twoheadrightarrow B$, for any arrow $f \colon P \to B$ there is an arrow $\overline{f} \colon P \to A$ such that $f = e \circ \overline{f}$, i.e. such that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=tiny]
+            & P
+                \ar[dl, "\overline{f}", swap, dashed]
+                \ar[dr, "f"]
+            \\
+            A
+                \ar[rr, "e", swap, two heads]
+            && B
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes. Note that $\overline{f}$ is not required to be unique; this is not a universal property of $P$. In particular, if $B = P$ then $e$ has a right-inverse, namely $\overline{1}_A$.
+
+    In $\catRMod$, the following are equivalent for an $R$-module $P$:
+    %
+    \begin{enumerate}
+        \item $P$ is projective in $\catRMod$.
+        
+        \item Every short exact sequence
+        %
+        \begin{equation*}
+            \begin{tikzcd}
+                0 \ar[r]
+                & M \ar[r]
+                & N \ar[r]
+                & P \ar[r]
+                & 0
+            \end{tikzcd}
+        \end{equation*}
+        %
+        splits.
+        
+        \item $P$ is a direct summand of a free module, i.e. there exist $R$-modules $F$ and $Q$, with $F$ free, such that $F \cong P \oplus Q$.
+    \end{enumerate}
+    
+    \begin{proofsec}
+        \item[(a) $\implies$ (b)]
+        By Proposition~7.5, the sequence above splits happens exactly when the homomorphism $\beta \colon N \to P$ has a right-inverse. But since $\beta$ is an epimorphism, we noted above that it has a right-inverse when $P$ is projective.
+
+        \item[(b) $\implies$ (c)]
+        Next assume that any such sequence splits. Consider the free module $R^{\oplus P}$ and the surjection $\phi \colon R^{\oplus P} \to P$ induced by the set function $\id_P$. As in \cref{rem:split-exact-sequences} this gives rise to the short exact sequence
+        %
+        \begin{equation*}
+            \begin{tikzcd}
+                0 \ar[r]
+                & \ker\phi \ar[r]
+                & R^{\oplus P} \ar[r, "\phi"]
+                & P \ar[r]
+                & 0,
+            \end{tikzcd}
+        \end{equation*}
+        %
+        and this splits by assumption, so $R^{\oplus P} \cong P \oplus \ker\phi$.
+
+        \item[(c) $\implies$ (a)]
+        Finally assume that $F \cong P \oplus Q$, let $\phi \colon M \to N$ be an epimorphism, and let $\psi \colon P \to N$ be any homomorphism. We must then find a $\overline{\psi} \colon P \to M$ so that the diagram
+        %
+        \begin{equation*}
+            \begin{tikzcd}[column sep=tiny]
+                & P
+                    \ar[dl, "\overline{\psi}", swap, dashed]
+                    \ar[dr, "\psi"]
+                \\
+                M
+                    \ar[rr, "\phi", swap, two heads]
+                && N
+            \end{tikzcd}
+        \end{equation*}
+        %
+        commutes. Since $F$ is free it is projective by \exref{3.6.9}, so there is a homomorphism $\chi \colon P \oplus Q \to M$ such that $\phi \circ \chi$ equals the coproduct map $[\psi, 0]$, where $0 \colon Q \to N$ is the zero homomorphism (though any homomorphism will do). Letting $\iota \colon P \to P \oplus Q$ be the canonical injection and putting $\overline{\psi} = \chi \circ \iota$, notice that the diagram
+        %
+        \begin{equation*}
+            \begin{tikzcd}[column sep=tiny]
+                & P
+                    \ar[d, "\iota"]
+                    \ar[ddl, "\overline{\psi}", swap, bend right]
+                    \ar[ddr, "\psi", bend left]
+                \\
+                & P \oplus Q
+                    \ar[dl, "\chi", swap]
+                    \ar[dr, "{[\psi, 0]}" {xshift=-5pt}]
+                \\
+                M
+                    \ar[rr, "\phi", swap, two heads]
+                && N
+            \end{tikzcd}
+        \end{equation*}
+        %
+        commutes, so $\phi \circ \overline{\psi} = \psi$ as desired.
+    \end{proofsec}
+\end{remarkbreak}
+
+
+\begin{exerciseframed}[3.7.1]
+    Assume that the complex
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            \cdots \ar[r]
+            & 0 \ar[r]
+            & M \ar[r]
+            & 0 \ar[r]
+            & \cdots
+        \end{tikzcd}
+    \end{equation*}
+    %
+    is exact. Prove that $M \cong 0$.
+\end{exerciseframed}
+
+\begin{solution}
+    The kernel of the map $M \to 0$ is $M$ itself, and this equals the image of the map $0 \to M$. Hence $M$ must be zero.
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.2]
+    Assume that the complex
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            \cdots \ar[r]
+            & 0 \ar[r, "\alpha"]
+            & M \ar[r, "\phi"]
+            & M' \ar[r, "\beta"]
+            & 0 \ar[r]
+            & \cdots
+        \end{tikzcd}
+    \end{equation*}
+    %
+    is exact. Prove that $M \cong M'$
+\end{exerciseframed}
+
+\begin{solution}
+    We have $\ker\phi = \im\alpha = 0$, so $\phi$ is injective. We further have $\im\phi = \ker\beta = M'$ since $\beta$ is trivial, so $\phi$ is surjective.
+
+    Alternatively we may simply apply Examples~7.1 and 7.2.
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.3]
+    Assume that the complex
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            \cdots \ar[r]
+            & 0 \ar[r, "\alpha"]
+            & L \ar[r, "\beta"]
+            & M \ar[r, "\phi"]
+            & M' \ar[r, "\gamma"]
+            & N \ar[r, "\delta"]
+            & 0 \ar[r]
+            & \cdots
+        \end{tikzcd}
+    \end{equation*}
+    %
+    is exact. Show that, up to natural identifications, $L = \ker\phi$ and $N = \coker\phi$.
+\end{exerciseframed}
+
+\begin{solution}
+    Notice that $\ker\beta = \im\alpha = 0$, so $L \cong \im\beta = \ker\phi$. Furthermore, $\im\gamma = \ker\delta = N$, and
+    %
+    \begin{equation*}
+        N
+            = \im\gamma
+            \cong \frac{M'}{\ker\gamma}
+            = \frac{M'}{\im\phi}
+            = \coker\phi.
+    \end{equation*}
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.5]
+    Assume that the complex
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            \cdots \ar[r]
+            & L \ar[r]
+            & M \ar[r]
+            & N \ar[r]
+            & \cdots
+        \end{tikzcd}
+    \end{equation*}
+    %
+    is exact and that $L$ and $N$ are Noetherian. Prove that $M$ is Noetherian.
+\end{exerciseframed}
+
+\begin{solution}
+    The discussion in §7.1 shows that $N \cong M/L$, so this follows directly from Proposition~6.7.
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.7]
+    Let
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & M
+                \ar[r, "\alpha"]
+            & N
+                \ar[r, "\beta"]
+            & P
+                \ar[r]
+            & 0
+        \end{tikzcd}
+    \end{equation*}
+    %
+    be a short exact sequence of $R$-modules, and let $L$ be an $R$-module.
+    %
+    \begin{enumerate}
+        \item Prove that there is an exact sequence
+        %
+        \begin{equation*}
+            \begin{tikzcd}
+                0
+                    \ar[r]
+                & \Hom_R(P,L)
+                    \ar[r]
+                & \Hom_R(N,L)
+                    \ar[r]
+                & \Hom_R(M,L)
+            \end{tikzcd}
+        \end{equation*}
+        %
+        of $R$-modules if $R$ is commutative, and of abelian groups otherwise.
+
+        \item TODO
+        \item TODO
+        
+        \item Show that if the original sequence splits, then the rightmost homomorphism in (i) is onto. % TODO reference
+    \end{enumerate}
+\end{exerciseframed}
+
+\begin{solution}
+\begin{solutionsec}
+    \item We claim that the sequence
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & \Hom_R(P,L)
+                \ar[r, "\beta^*"]
+            & \Hom_R(N,L)
+                \ar[r, "\alpha^*"]
+            & \Hom_R(M,L)
+        \end{tikzcd}
+    \end{equation*}
+    %
+    is exact, where $\beta^*$ and $\alpha^*$ are the pullbacks of $\beta$ and $\alpha$ respectively. We first show that $\beta^*$ is a homomorphism of abelian groups. For $\phi, \psi \in \Hom_R(P,L)$ and $n \in N$ we have
+    %
+    \begin{equation*}
+        \beta^*(\phi + \psi)
+            = (\phi + \psi) \circ \beta(n)
+            = \phi(\beta(n)) + \psi(\beta(n))
+            = (\beta^*\phi + \beta^*\psi)(n)
+    \end{equation*}
+    %
+    as claimed. Assuming that $R$ is commutative and $r \in R$, the map $r\phi$ is also an $R$-module homomorphism. In this case we have
+    %
+    \begin{equation*}
+        \beta^*(r\phi)(n)
+            = (r\phi) \circ \beta(n)
+            = r\phi(\beta(n))
+            = r(\beta^*\phi)(n)
+    \end{equation*}
+    %
+    as desired. Similarly for $\alpha^*$.
+
+    Next note that $\beta^*$ is injective, proving exactness at $\Hom_R(P,L)$:
+    %
+    \begin{equation*}
+        \phi \circ \beta
+            = \beta^*\phi
+            = \beta^*\psi
+            = \psi \circ \beta,
+    \end{equation*}
+    %
+    which implies that $\phi = \psi$ since $\beta$ is surjective.
+
+    Finally we show exactness at $\Hom_R(N,L)$. First notice that
+    %
+    \begin{equation*}
+        (\alpha^* \circ \beta^*)(\psi)
+            = \psi \circ \beta \circ \alpha
+            = \psi \circ 0,
+    \end{equation*}
+    %
+    showing that $\im\beta^* \subseteq \ker\alpha^*$. For the opposite inclusion, let $\psi \in \ker\alpha^*$. Then $\im\alpha \subseteq \ker\psi$, so since
+    %
+    \begin{equation*}
+        P
+            \cong \frac{N}{\ker\beta}
+            = \frac{N}{\im\alpha},
+    \end{equation*}
+    %
+    by the universal property of quotients $\psi$ factors (uniquely) through $\beta$, so $\psi = \phi \circ \beta$ for some $\phi \colon P \to L$. That is, the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            M
+                \ar[r, "\alpha"]
+                \ar[dr, "0", swap]
+            & N
+                \ar[r, "\beta"]
+                \ar[d, "\psi"]
+            & P
+                \ar[dl, "\phi"]
+            \\
+            & L
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes. Thus $\psi = \beta^*\phi$, so $\psi \in \im\beta^*$, showing exactness.
+
+    \item 
+    \item 
+
+    \item If the original sequence splits, then $\alpha$ has a left-inverse $\gamma$ by Proposition~7.5. For $\chi \in \Hom_R(M,L)$ we have
+    %
+    \begin{equation*}
+        \alpha^*(\chi \circ \gamma)
+            = (\chi \circ \gamma) \circ \alpha
+            = \chi \circ (\gamma \circ \alpha)
+            = \chi,
+    \end{equation*}
+    %
+    so $\alpha^*$ is surjective.
+\end{solutionsec}
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.8]
+    Prove that every exact sequence
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & M
+                \ar[r]
+            & N
+                \ar[r]
+            & F
+                \ar[r]
+            & 0
+        \end{tikzcd}
+    \end{equation*}
+    %
+    of $R$-modules, with $F$ \emph{free}, splits.
+\end{exerciseframed}
+
+\begin{solution}
+    Since the map $\phi \colon N \to F$ above is surjective, \exref{3.6.9} (with $\alpha = \id_F$) yields an $R$-module homomorphism $\beta \colon F \to N$ such that $\id_F = \phi \circ \beta$. That is, $\phi$ has a right-inverse, so Proposition~7.5 implies that the sequence splits.
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.9]
+    Let
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & M
+                \ar[r]
+            & N
+                \ar[r]
+            & F
+                \ar[r]
+            & 0
+        \end{tikzcd}
+    \end{equation*}
+    %
+    be a short exact sequence of $R$-modules, with $F$ free, and let $L$ be an $R$-module. Prove that there is an exact sequence
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & \Hom_R(F,L)
+                \ar[r]
+            & \Hom_R(N,L)
+                \ar[r]
+            & \Hom_R(M,L)
+                \ar[r]
+            & 0.
+        \end{tikzcd}
+    \end{equation*}
+\end{exerciseframed}
+
+\begin{solution}
+    \exref{3.7.7} already yields an exact sequence
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & \Hom_R(F,L)
+                \ar[r]
+            & \Hom_R(N,L)
+                \ar[r]
+            & \Hom_R(M,L).
+        \end{tikzcd}
+    \end{equation*}
+    %
+    By \exref{3.7.8} the first sequence above splits, so \exref{3.7.7} again implies that the homomorphism $\Hom_R(N,L) \to \Hom_R(M,L)$ is surjective, yielding the rest of the sequence.
+\end{solution}
+
+
+\begin{exerciseframed}[3.7.11]
+    Let
+    %
+    \begin{equation}
+        \label{eq:split-exact-exercise}
+        \begin{tikzcd}
+            0
+                \ar[r]
+            & M_1
+                \ar[r]
+            & N
+                \ar[r]
+            & M_2
+                \ar[r]
+            & 0
+        \end{tikzcd}
+    \end{equation}
+    %
+    be an exact sequence of $R$-modules. (This may be called an \enquote{extension} of $M_2$ by $M_1$.) Suppose there is \emph{any} $R$-module homomorphism $\phi \colon N \to M_1 \oplus M_2$ making the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd} % TODO the equals signs have a white background, fix
+            0
+                \ar[r]
+            & M_1
+                \ar[r, "\alpha"]
+                \ar[d, equal]
+            & N
+                \ar[r, "\beta"]
+                \ar[d, "\phi", dashed]
+            & M_2
+                \ar[r]
+                \ar[d, equal]
+            & 0
+            \\
+            0   
+                \ar[r]
+            & M_1
+                \ar[r, "\iota", swap]
+            & M_1 \oplus M_2
+                \ar[r, "\pi_2", swap]
+            & M_2
+                \ar[r]
+            & 0
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commute, where the bottom sequence is the standard sequence of a direct sum. Prove that \cref{eq:split-exact-exercise} splits.
+\end{exerciseframed}
+
+\begin{solution}
+    It suffices to show that $\phi$ is bijective. To prove injectivity, let $n \in \ker\phi$. Then $\phi(n) = 0 = \iota(0)$, so $n$ lies in the image of $\alpha$. Pick $m \in M_1$ such that $\alpha(m) = n$, and notice that
+    %
+    \begin{equation*}
+        \iota(m)
+            = \phi(\alpha(m))
+            = \phi(n)
+            = \iota(0),
+    \end{equation*}
+    %
+    and since $\iota$ is injective, we have $m = 0$.
+
+    To prove surjectivity, let $m_1 \in M_1$ and $m_2 \in M_2$. Since $\beta$ is surjective there exists an $n' \in N$ such that $\beta(n') = m_2$. Now let $n = \alpha(m_1 - \pi_1(\phi(n'))) + n'$ and notice that
+    %
+    \begin{align*}
+        \phi(n)
+            &= \iota \bigl( m_1 - \pi_1(\phi(n')) \bigr) + \phi(n') \\
+            &= \bigl( m_1 - \pi_1(\phi(n')), 0 \bigr) + \bigl( \pi_1(\phi(n')), \pi_2(\phi(n')) \bigr) \\
+            &= \bigl( m_1, \pi_2(\phi(n')) \bigr) \\
+            &= (m_1, \beta(n')) \\
+            &= (m_1, m_2).
+    \end{align*}
+    %
+    Hence $\phi$ is also surjective and thus an isomorphism.
+\end{solution}
+
+
+
+\chapter{Groups, second encounter}
+
+\section{The conjugation action}
+
+\begin{remarkbreak}[Normalisers and centralisers]
+    Let $G$ be a group. For $g \in G$ we recall the inner automorphism $\gamma_g \colon G \to G$ given by $\gamma_g(a) = gag\inv$. This induces a map $\Gamma_g \colon 2^G \to 2^G$ given by $\Gamma_g(A) = \gamma_g(A) = gAg\inv$, and the map $g \mapsto \Gamma_g$ is then an action on $2^G$. The stabiliser subgroup of a set $A \subseteq G$ with respect to this action is called the \emph{normaliser} of $A$, denoted $N_G(A)$. More explicitly we have
+    %
+    \begin{align*}
+        N_G(A)
+            &= \set{g \in G}{\Gamma_g(A) = A} \\
+            &= \set{g \in G}{gAg\inv = A}.
+    \end{align*}
+    %
+    If $A$ is a singleton $\{a\}$, then we simply write $N_G(a)$ for its normaliser. If $g \in N_G(A)$ then $gAg\inv \subseteq A$. In other words, the set $A$ is invariant under $\gamma_g$. Since $\gamma_g$ is injective, if $A$ is finite then the above inclusion is also sufficient for $g$ to lie in $N_G(A)$, but this is not the case in general.
+
+    A subgroup $H$ of $G$ is a normal subgroup of the normaliser $N_G(H)$. In fact, $N_G(H)$ is the largest subgroup of $G$ in which $H$ is normal. It follows that $H$ is normal in $G$ if and only if $N_G(H) = G$. The orbit of $H$ under the action on $2^G$ is the set $[H]$ of subgroups of $H$ conjugate to $H$, i.e. its conjugacy class. The orbit-stabiliser theorem thus yields a bijection $G/N_G(H) \cong_\catSet [H]$. If finite, the number of subgroups conjugate to $H$ is thus the index $[G : N_G(H)]$ (this is Lemma~1.13).
+
+    If $g \in N_G(A)$ then $A$ is invariant under $\gamma_g$, so $\gamma_g$ restricts to a well-defined map $\gamma_g|_A \colon A \to A$. The \emph{centraliser} of $A$ is the subset of $N_G(A)$ of elements $g$ such that $\gamma_g|_A$ is the identity on $A$, i.e.
+    %
+    \begin{align*}
+        Z_G(A)
+            &= \set{g \in N_G(A)}{\gamma_g|_A = 1_A} \\
+            &= \set{g \in G}{\forall a \in A \colon gag\inv = a}.
+    \end{align*}
+    %
+    For a singleton $\{a\}$ we write $Z_G(a)$ for its centraliser. Notice that $Z_G(a) = N_G(a)$, and that this is the stabiliser of $a$ under the conjugation action on $G$. If $\{A_i\}_{i \in I}$ is a family of subsets of $G$, then we clearly have
+    %
+    \begin{equation*}
+        Z_G \Bigl( \bigunion_{i \in I} A_i \Bigr)
+            = \bigintersect_{i \in I} Z_G(A_i).
+    \end{equation*}
+    %
+    In particular we have
+    %
+    \begin{equation*}
+        Z_G(A)
+            = \bigintersect_{a \in A} Z_G(a),
+    \end{equation*}
+    %
+    and so $Z_G(A)$ is a subgroup of $G$. Also notice that if $A \subseteq B \subseteq G$, then $Z_G(B) \subseteq Z_G(A)$. In particular,
+    %
+    \begin{equation*}
+        \bigunion_{i \in I} Z_G(A_i)
+            \subseteq Z_G \Bigl( \bigintersect_{i \in I} A_i \Bigr).
+    \end{equation*}
+    %
+    The opposite inclusion probably (clearly?) doesn't hold in general, since the union of subgroups isn't necessarily a subgroup. Perhaps there is a closer relationship between the two sides of the inclusion, I don't know.
+
+    The \emph{centre} of $G$ is the centraliser $Z_G(G)$, denoted $Z(G)$. Equivalently, this is the kernel of the action $G \to \Aut_\catGrp(G)$. Notice that this is the set of fixed points of the conjugation action on $G$, and contains the elements that commute with \emph{all} elements in $G$.
+\end{remarkbreak}
+
+
+\begin{exerciseframed}[4.1.1]
+    Let $p$ be a prime integer, let $G$ be a $p$-group, and let $S$ be a finite set such that $\card{S} \not\equiv 0 \pmod p$. If $G$ acts on $S$, prove that the action must have fixed points.
+\end{exerciseframed}
+
+\begin{solution}
+    If $Z$ denotes the set of fixed points of the action, then Corollary~1.3 implies that
+    %
+    \begin{equation*}
+        \card{Z}
+            \equiv \card{S}
+            \not\equiv 0
+            \mod p.
+    \end{equation*}
+    %
+    In particular, $\card{Z} \neq 0$, so the action has fixed points.
+
+    (Remark: Notice that we cannot use this type of argument to conclude from $\card{S} \equiv 0 \pmod p$ that the action has \emph{no} fixed points: The number of fixed points just has to be a multiple of $p$.)
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.4]
+    Let $G$ be a group, and let $N$ be a subgroup of $Z(G)$. Prove that $N$ is normal in $G$.
+\end{exerciseframed}
+
+\begin{solution}
+    For $g \in G$ and $n \in N$ we have $gn = ng$. But then $gN = Ng$, so $N$ is normal in $G$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.5]
+    Let $G$ be a group. Prove that $G/Z(G)$ is isomorphic to the group $\Inn(G)$ of inner automorphisms of $G$. (Cf. \exref{2.4.8}.) Then prove Lemma~1.5 again by using the result of \exref{2.6.7}.
+\end{exerciseframed}
+
+\begin{solution}
+    For $g \in G$ let $\gamma_g \colon G \to G$ be the corresponding inner automorphism given by $\gamma_g(a) = gag\inv$. Define a map $\phi \colon G \to \Inn(G)$ by $\phi(g) = \gamma_g$. Notice that $\gamma_g$ is the identity on $G$ exactly when $g$ commutes with every element of $G$, i.e. when $g \in Z(G)$. Hence $\ker\phi = Z(G)$, and since $\phi$ is surjective the first isomorphism theorem implies that $G/Z(G) \cong \Inn(G)$ as claimed.
+
+    By \exref{2.6.7} we know that $\Inn(G)$ is trivial if it is cyclic. If $G/Z(G)$ is cyclic the above thus implies that it is in fact trivial, and hence that $G = Z(G)$, i.e. that $G$ is commutative.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.6]
+    Let $p, q$ be prime integers, and let $G$ be a group of order $pq$. Prove that either $G$ is commutative or the center of $G$ is trivial. Conclude (using Corollary~1.9) that every group of order $p^2$, for a prime $p$, is commutative.
+\end{exerciseframed}
+
+\begin{solution}
+    Assume that the centre $Z(G)$ is nontrivial. Since it is a subgroup of $G$, Lagrange's theorem implies that $\card{Z(G)}$ divides $\card{G} = pq$, so assume that $\card{Z(G)} = p$. Hence $[G : Z(G)] = q$, but then Example~II.8.16 implies that $G/Z(G)$ is cyclic. It follows from Lemma~1.5 that $G$ is commutative.
+
+    In the case $p = q$, $G$ is a $p$-group so Corollary~1.9 implies that its centre is nontrivial. The above then shows that in fact $Z(G) = G$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.8]
+    Let $p$ be a prime number, and let $G$ be a $p$-group: $\card{G} = p^r$. Prove that $G$ contains a normal subgroup of order $p^k$ for every nonnegative $k \leq r$. 
+\end{exerciseframed}
+
+\begin{solution}
+    We argue by induction on $r$. If $r = 0$ then this is obvious, so assume that $r > 0$. The centre of $G$ is nontrivial by Corollary~1.9 and a $p$-group, and since $Z(G)$ is commutative it contains an element $h$ of order $p$ by \exref{2.8.17}. Then $\gen{h}$ is a subgroup of $Z(G)$ of order $p$, hence is normal in $G$ by \exref{4.1.4}. The quotient group $G/\gen{h}$ is of order $p^{r-1}$, so by induction it has a normal subgroup $\tilde H_k$ of order $p^k$ for $k = 0, \ldots, r-1$. By Proposition~8.9 each $\tilde H_k$ is on the form $H_k/\gen{h}$ for some subgroup $H_k$ of $G$, and the third isomorphism theorem implies that $H_k$ is normal in $G$. Also notice that
+    %
+    \begin{equation*}
+        \ord{H_k}
+            = [H_k : \gen{g}] \, \ord{g}
+            = \ord{\tilde H_k} \, \ord{g}
+            = p^k p
+            = p^{k+1}.
+    \end{equation*}
+    %
+    Hence $G$ has normal subgroups of order $p^k$ for $k = 1, \ldots, r$ as desired.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.9]
+    Let $p$ be a prime number, $G$ a $p$-group, and $H$ a nontrivial normal subgroup of $G$. Prove that $H \intersect Z(G) \neq \{e\}$.
+\end{exerciseframed}
+
+\begin{solution}
+    Notice that $H$ must also be a $p$-group. Also notice that $H$ is a union of conjugacy classes since it is normal, and the order of each nontrivial conjugacy class divides the order of $G$, so they are divisible by $p$. It follows that the number of fixed points in $H$ is also divisible by $p$, which proves the claim.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.14]
+    Let $G$ be a group, and assume $[G : Z(G)] = n$ is finite. Let $A \subseteq G$ be any subset. Prove that the number of conjugates of $A$ is at most $n$.
+\end{exerciseframed}
+
+\begin{solution}
+    Notice that the conjugates of $A$ are precisely the images $\gamma_g(A) = gAg\inv$ of $A$ under inner automorphisms for all $g \in G$. The number of conjugates of $A$ are thus at most the number of inner automorphisms, and since $G/Z(G) \cong \Inn(G)$ by \exref{4.1.5}, this number is $n$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.17]
+    Let $H$ be a proper subgroup of a finite group $G$. Prove that $G$ is not the union of the conjugates of $H$.
+\end{exerciseframed}
+
+\begin{solution}
+    By Lemma~1.13, the number of conjugates of $H$ is $[G : N_G(H)]$. Since each of these conjugates overlap (at least in the identity), the number of elements in the union of the conjugates of $H$ is \emph{strictly} less than
+    %
+    \begin{equation*}
+        [G : N_G(H)] \, \card{H}
+            \leq [G : H] \, \card{H}
+            = \card{G}.
+    \end{equation*}
+    %
+    The union of the conjugates of $H$ is thus properly contained in $G$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.18]
+    Let $S$ be a set endowed with a transitive action of a finite group $G$, and assume $\card{S} \geq 2$. Prove that there exists a $g \in G$ without fixed points in $S$, that is, such that $gs \neq s$ for all $s \in S$.
+\end{exerciseframed}
+
+\begin{solution}
+    By the orbit-stabiliser theorem we may assume that $S = G/H$ with $H$ a proper subgroup of $G$ (since $\card{S} \geq 2$), and that the action on $G/H$ is left-multiplication. By \exref{4.1.17} there is a $g \in G$ that lies outside any conjugate of $H$, so that $g \not\in aHa\inv$ for all $a \in G$. Hence $ga \not\in aH$, so $gaH \neq aH$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.1.20]
+    Let $G = \GL{2}{\complex}$, and let $H$ be the subgroup consisting of upper triangular matrices (Exercise~II.6.2). Prove that $G$ is the union of the conjugates of $H$. Thus, the finiteness hypothesis in \exref{4.1.17} is necessary.
+\end{exerciseframed}
+
+\begin{solution}
+    This in fact holds for $\GL{n}{\complex}$ for $n > 0$: If $A \in \GL{n}{\complex}$, then Schur's theorem yields a unitary matrix $Q$ and an upper triangular matrix $U$ such that $A = QUQ\inv$.
+\end{solution}
+
+
+\section{The Sylow theorems}
+
+\begin{exerciseframed}[4.2.1]
+    Prove Claim~2.2: Let $G$ be a finite group, let $p$ be a prime divisor of $\card{G}$, and let $N$ be the number of cyclic subgroups of $G$ of order $p$. Then $N \equiv 1 \pmod p$.
+\end{exerciseframed}
+
+\begin{solution}
+    Notice that an element of $G$ lies in a (cyclic) subgroup of order $p$ if and only if it is either the identity or of order $p$ (by Lagrange's theorem). Thus any non-identity element of such a subgroup is a generator. Notice also that two distict such subgroups only intersect at the identity. It follows that, in the notation of the proof of Theorem~2.1, $\card{Z} = Np - N + 1$. Hence $N(p-1) + 1 \equiv 0 \pmod p$, which implies that
+    %
+    \begin{equation*}
+        N
+            \equiv -N(p-1)
+            \equiv 1
+            \mod p
+    \end{equation*}
+    %
+    as desired.
+\end{solution}
+
+
+\begin{exerciseframed}[4.2.2]
+    Let $G$ be a group. A subgroup $H$ of $G$ is \emph{characteristic} if $\phi(H) \subseteq H$ for every automorphism $\phi$ of $G$.
+    %
+    \begin{enumerate}
+        \item Prove that characteristic subgroups are normal.
+        
+        \item Let $H \subseteq K \subseteq G$, with $H$ characteristic in $K$ and $K$ normal in $G$. Prove that $H$ is normal in $G$.
+        
+        \item Let $G, K$ be groups, and assume that $G$ contains a single subgroup $H$ isomorphic to $K$. Prove that $H$ is normal in $G$.
+
+        \item Let $K$ be a normal subgroup of a finite group $G$, and assume that $\card{K}$ and $\card{G/K}$ are relatively prime. Prove that $K$ is characteristic in $G$.
+    \end{enumerate}
+\end{exerciseframed}
+
+\begin{solution}
+\begin{solutionsec}
+    \item This is obvious, since then $gHg\inv \subseteq H$ for all $g \in G$.
+
+    \item Let $g \in G$ and consider the inner automorphism $\gamma_g \in \Inn(G)$. Since $K$ is normal in $G$, this restricts to an automorphism $\gamma_g|_K \colon K \to K$. And since $H$ is characteristic in $K$, this implies that
+    %
+    \begin{equation*}
+        gHg\inv
+            = \gamma_g|_K(H)
+            \subseteq H
+    \end{equation*}
+    %
+    so $H$ is normal in $G$.
+
+    \item For each $g \in G$, the subgroup $gHg\inv$ is isomorphic to $H$, hence to $K$. But then we must have $gHg\inv = H$, so $H$ is normal.
+
+    \item We prove the following lemma:
+    %
+    \begin{displaytheorem}
+        Let $G$ be a group, $H$ a finite subgroup, and $N$ a normal subgroup such that $[G : N]$ is finite. If $\card{H}$ and $[G : N]$ are relatively prime, then $H \subseteq N$.
+    \end{displaytheorem}
+    %
+    By the third isomorphism theorem we have
+    %
+    \begin{equation*}
+        \frac{HN}{N}
+            \cong
+            \frac{H}{H \intersect N},
+    \end{equation*}
+    %
+    and these groups are finite since $H$ is. Notice that $[H : H \intersect N]$ is then a divisor of $\card{H}$, and also a divisor of $[G : N]$ since $[HN : N]$ is. But then $[H : H \intersect N] = 1$ by relative primality, showing that $H \intersect N = H$.
+
+    We now prove the original claim. If $\phi$ is an automorphism of $G$, then $\phi(K)$ is a subgroup of $G$ with $\card{\phi(K)} = \card{K}$. Hence $\card{\phi(K)}$ and $[G : K]$ are relatively prime, so the lemma implies that $\phi(K) \subseteq K$. Since the two subgroups are finite with the same cardinality, this inclusion is in fact an equality.
+\end{solutionsec}
+\end{solution}
+
+
+\begin{exerciseframed}[4.2.3]
+    Prove that a nonzero abelian group $G$ is simple if and only if $G \cong \ints/p\ints$ for some positive prime integer $p$.
+\end{exerciseframed}
+
+\begin{solution}
+    First notice that $G$ must be cyclic: If $g \neq e$, then $\gen{g}$ is a nontrivial normal subgroup of $G$, hence must equal $G$. Hence it suffices to find the simple cyclic groups. But these are precisely the groups $\ints/p\ints$ for primes $p$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.2.4]
+    Prove that a group $G$ is simple if and only if its only homomorphic images (i.e., groups $G'$ such that there is an onto homomorphism $G \to G'$) are the trivial group and $G$ itself (up to isomorphism). 
+\end{exerciseframed}
+
+\begin{solution}
+    First assume that $G$ is simple, and let $\phi \colon G \to G'$ be a homomorphism. This is either trivial or injective, and in the latter case $G \cong \phi(G)$.
+
+    Conversely, assume that $G$ is \emph{not} simple, and let $H$ be a nontrivial proper normal subgroup of $G$. Then $G/H$ is the image of the quotient map $G \to G/H$, and this is neither trivial nor isomorphic to $G$.
+\end{solution}
+
+
+\begin{exerciseframed}[4.2.5]
+    Let G be a simple group, and assume $\phi \colon G \to G'$ is a nontrivial group homomorphism. Prove that $\phi$ is injective.
+\end{exerciseframed}
+
+\begin{solution}
+    The kernel of $\phi$ is a normal subgroup of $G$, so this is either $\{e\}$ or $G$. The latter is impossible since $\phi$ is nontrivial, so $\ker \phi = \{e\}$. Hence $\phi$ is injective.
+\end{solution}
+
+
+\chapter{Irreducibility and factorization in integral domains}
+
+\section{Chain conditions and existence of factorizations}
+
+\section{UFDs, PIDs, Euclidean domains}
+
+\section{Intermezzo: Zorn's lemma}
+
+\section{Unique factorization in polynomial rings}
+
+\begin{exerciseframed}[5.4.17]
+    Let $F$ be a field, and recall the notion of characteristic of a ring (Definition III.3.7); the characteristic of a field is either $0$ or a prime integer (\exref{3.3.14}).
+    %
+    \begin{enumerate}
+        \item Show that $F$ has characteristic $0$ if and only if it contains a copy of $\rationals$ and that $F$ has characteristic $p$ if and only if it contains a copy of the field $\ints/p\ints$.
+
+        \item Show that (in both cases) this determines the smallest subfield of $F$; it is called the \emph{prime subfield} of $F$.
+    \end{enumerate}
+\end{exerciseframed}
+
+\begin{solution}
+    First assume that $F$ has characteristic $0$. Then the unique ring homomorphism $\iota \colon \ints \to F$ is injective, so $\iota(n)$ is a unit for $n \neq 0$. Define the map $\phi \colon \rationals \to F$ by
+    %
+    \begin{equation*}
+        \phi \biggl( \frac{m}{n} \biggr)
+            = \iota(m) \iota(n)\inv.
+    \end{equation*}
+    %
+    This is clearly well-defined. Notice that
+    %
+    \begin{equation*}
+        \phi \biggl( \frac{m}{n} \frac{p}{q} \biggr)
+            = \phi \biggl( \frac{mp}{nq} \biggr)
+            = \iota(mp) \iota(nq)\inv
+            = \iota(m) \iota(n)\inv \iota(p) \iota(q)\inv
+            = \phi \biggl( \frac{m}{n} \biggr) \phi \, \biggl( \frac{p}{q} \biggr),
+    \end{equation*}
+    %
+    and that
+    %
+    \begin{align*}
+        \phi \biggl( \frac{m}{n} + \frac{p}{q} \biggr)
+            &= \phi \biggl( \frac{mq+pn}{nq} \biggr)
+             = \iota(mq+pn) \iota(nq)\inv \\
+            &= \iota(mq) \iota(nq)\inv + \iota(pn) \iota(nq)\inv \\
+            &= \iota(m) \iota(n)\inv + \iota(p) \iota(q)\inv \\
+            &= \phi \biggl( \frac{m}{n} \biggr) + \phi \biggl( \frac{p}{q} \biggr).
+    \end{align*}
+    %
+    Thus $\phi$ is a ring homomorphism, and since $\rationals$ is a field it is also injective. Hence $F$ contains a copy of $\rationals$. Conversely, if there is an injective map $\rationals \to F$ then the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=small]
+            &\ints
+                \ar[dl]
+                \ar[dr]
+            \\
+            \rationals
+                \ar[rr, hook]
+            && F
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes by uniqueness. Hence $\ints \to \rationals$ and $\ints \to F$ have the same kernel, implying that $\chr F = \chr \rationals = 0$.
+
+    Next assume that $F$ has characteristic $p$. The unique ring homomorphism $\iota \colon \ints \to F$ then has kernel $p\ints$ so it induces an injection $\tilde{\iota} \colon \ints/p\ints \to F$ by the canonical decomposition. The converse follows as before.
+
+    TODO (b)?
+\end{solution}
+
+
+\chapter{Linear algebra}
+
+\chapter{Fields}
+
+\section{Field extensions, I}
+
+
+
+\begin{remarkbreak}[Initial objects in $\catFld_0$ and $\catFld_p$]
+    We first show that $\rationals$ is initial in $\catFld_0$. Let $k$ be a field of characteristic $0$. Then \exref{5.4.17} implies the existence of a ring homomorphism $\phi \colon \rationals \to k$. Let $\psi \colon \rationals \to k$ be another homomorphism, and let $\iota \colon \ints \to \rationals$ be the unique ring homomorphism. Then $\phi \circ \iota = \psi \circ \iota$ by uniqueness, and since $\iota$ is an epimorphism by §III.2.3 it follows that $\phi = \psi$.
+
+    The same argument works in $\catFld_p$ with the quotient map $\pi_p$ playing the role of $\iota$, so $\field_p$ is initial in $\catFld_p$.
+\end{remarkbreak}
+
+
+\begin{exerciseframed}[7.1.1]
+    Prove that if $k \subseteq K$ is a field extension, then $\chr k = \chr K$. Prove that the category $\catFld$ has no initial object.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $\phi \colon k \to K$ be a field extension, and let $\iota_k \colon \ints \to k$ and $\iota_K \colon \ints \to K$ be the unique ring homomorphisms. Notice that $\phi$ is injective by [ref], so since $\iota_K = \phi \circ \iota_k$ by uniqueness, we have $\ker \iota_k = \ker \iota_K$ and hence $\chr k = \chr K$.
+
+    If $k$ is any field and $\chr k = p$, then there is no homomorphism $k \to \field_q$ for $q \neq p$. Hence $k$ is not initial in $\catFld$.
 \end{solution}
 
 
