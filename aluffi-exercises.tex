@@ -1507,6 +1507,29 @@ Exercise~8.14 is solved by the same argument.
     \end{equation*}
     %
     as claimed.
+
+    We also have the following corollary:
+    %
+    \begin{displaytheorem}
+        If $n$ is a product of distinct primes and $a,v \in \ints$, then
+        %
+        \begin{equation}
+            \label{eq:Eulers-theorem-corollary}
+            a^{1+\phi(n)v} \equiv a \pmod n.
+        \end{equation}
+    \end{displaytheorem}
+    %
+    If $n = p$ is a prime and $p \divides a$, then both sides are $0 \mod p$. If instead $a$ and $p$ are coprime, then the claim follows from Euler's theorem (or Fermat's little theorem).
+
+    Next, if $m$ and $n$ are coprime and \cref{eq:Eulers-theorem-corollary} holds as stated as well as with $n$ replaced by $m$, then by Exercise~V.6.8 [TODO] we have
+    %
+    \begin{equation*}
+        a^{1+\phi(mn)v}
+            = a^{1+\phi(m)\phi(n)v}
+            \equiv a \pmod m,
+    \end{equation*}
+    %
+    and similarly mod $n$. Since $m$ and $n$ are coprime this also holds mod $mn$. The claim now follows by induction.
 \end{solution}
 
 
