@@ -4303,6 +4303,59 @@ This result says that, given an $R$-module structure on $M$, the only thing need
 \end{solution}
 
 
+\section{Irreducibility of polynomials}
+
+\section{Further remarks and examples}
+
+\begin{exerciseframed}[5.6.8]
+    Let $n \in \ints$ be a positive integer and $n = p_1^{\alpha_1} \cdots p_r^{\alpha_r}$ its prime factorisation. By the classification theorem for finite abelian groups (or, in fact, simpler considerations; cf. \exref{2.4.9})
+    %
+    \begin{equation*}
+        \frac{\ints}{(n)}
+            \cong \frac{\ints}{(p_1^{\alpha_1})}
+                  \prod \cdots
+                  \prod \frac{\ints}{(p_r^{\alpha_r})}
+    \end{equation*}
+    %
+    \emph{as abelian groups}.
+    %
+    \begin{enumerate}
+        \item Use the CRT to prove that this is in fact a \emph{ring} isomorphism.
+
+        \item Prove that
+        %
+        \begin{equation*}
+            \biggl( \frac{\ints}{(n)} \biggr)^*
+                \cong \biggl( \frac{\ints}{(p_1^{\alpha_1})} \biggr)^*
+                      \prod \cdots
+                      \prod \biggl( \frac{\ints}{(p_r^{\alpha_r})} \biggr)^*
+        \end{equation*}
+        %
+        (recall that $(\ints/n\ints)^*$ denotes the group of units of $\ints/n\ints$).
+
+        \item Recall (\exref{2.6.14}) that \emph{Euler's $\phi$-function $\phi(n)$} denotes the number of
+        positive integers $< n$ that are relatively prime to $n$. Prove that
+        %
+        \begin{equation*}
+            \phi(n)
+                = p_1^{\alpha_1 - 1}(p_1 - 1) \cdots p_r^{\alpha_r - 1}(p_r - 1).
+        \end{equation*}
+    \end{enumerate}
+\end{exerciseframed}
+
+\begin{solution}
+\begin{solutionsec}
+    \item We prove this without appealing to the CRT. Simply notice that the maps $\pi^{mn}_m$ and $\pi^{mn}_n$ are ring isomorphisms for coprime $m$ and $n$. The claim then follows by induction.
+
+    \item We prove that $(\ints/mn\ints)^* \cong (\ints/m\ints)^* \prod (\ints/n\ints)^*$ for coprime $m$ and $n$, where the (multiplicative) group isomorphism is just the restriction of the ring isomorphism above; the claim will then follow by induction. If $[a]_{mn} \in (\ints/mn\ints)^*$, then $a$ is also relatively prime to both $m$ and $n$, so $[a]_m \in (\ints/m\ints)^*$ and similarly for $n$.
+    
+    Conversely, if $[b]_m \in (\ints/m\ints)^*$ and $[c]_n \in (\ints/n\ints)^*$, then there exists an $a \in \ints$ such that $\pi^{mn}_m([a]_{mn}) = [b]_m$ and $\pi^{mn}_n([a]_{mn}) = [c]_n$. But then $a \equiv b \pmod m$ and $a \equiv c \pmod n$, so $a$ is relatively prime to both $m$ and $n$, hence to $mn$ as desired.
+
+    \item We first notice that, by (b), $\phi(mn) = \phi(m) \phi(n)$ for coprime $m$ and $n$. Next notice that $\phi(p^k) = p^k - p^{k-1}$ for a prime $p$. The claim follows.
+\end{solutionsec}
+\end{solution}
+
+
 \chapter{Linear algebra}
 
 \chapter{Fields}
