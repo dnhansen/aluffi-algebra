@@ -398,47 +398,53 @@
 
 \section[The category Grp][The category $\catGrp$]{The category $\catGrp$}
 
+\newcommand{\frakS}{\mathfrak{S}}
+
 \begin{remarkbreak}[Universal algebra]
     Let $A$ be a set and let $n \in \naturals$. An \emph{operation on $A$} is a set function $A^n \to A$. The set $A^0 \cong 1$ is a singleton and is only determined up to isomorphism in $\catSet$. The number $n$ is called the operation's \emph{arity}, and we say that the operation is \emph{$n$-ary}. A $0$-ary operation is also called a \emph{constant}. If $c \colon \{*\} \to A$ is a constant, then instead of $c(*)$ we simply write $c$.
     
     An \emph{algebra} is a pair $\frakA = \langle A, F \rangle$, where $A$ is a set\footnote{Many authors require $A$ to be nonempty, e.g. Manzano and Bergman} and $F$ is a collection (of arbitrary cardinality) of operations on $A$. Writing $F = \set{f_i}{i \in I}$ for some index set $I$, the \emph{(similarity) type} of $\frakA$ is the function $\rho \colon I \to \naturals$ where $\rho(i)$ is the arity of $f_i$. If $I$ is a finite set, then writing $I = \{1, \ldots, k\}$ we display the type of an algebra by the tuple $\langle \rho(1), \ldots, \rho(k) \rangle$, and we also refer to this tuple as the type of the algebra. Notice that if any operation in $F$ is a constant, then $A$ must be nonempty.
 
-    Let $\frakA = \langle A, F \rangle$ and $\frakB = \langle B, G \rangle$ be algebras of the same similarity type $\rho \colon I \to \naturals$, and write $F = \set{f_i}{i \in I}$ and $G = \set{g_i}{i \in I}$. A set function $\phi \colon A \to B$ is called a \emph{homomorphism} from $\frakA$ to $\frakB$ if
+    A \emph{subalgebra} of $\frakA$ is an algebra $\frakS = \langle S, F_S \rangle$ such that $S \subseteq A$, and such that for each $g \in F_S$ there is an $f \in F$ with $g = f|_S$. Notice that a subset $S \subseteq A$ induces a subalgebra if $f(S^n) \subseteq S$ for all $f \in F$, where $n = \rho(f)$. We will usually identify the algebra $\frakS$ with the underlying set $S$.
+
+    When considering the family of algebras with a particular similarity type, it is common to index the operations on each algebra by a family $\calF$ of \emph{operation symbols}. In this case we write $\calF^\frakA$ for the set of operations on $\frakA$, and for each $f \in \calF$ we write $f^\frakA$ for the corresponding operation on $\frakA$.
+
+    Let $\frakA = \langle A, \calF^\frakA \rangle$ and $\frakB = \langle B, \calF^\frakB \rangle$ be algebras of the same similarity type $\rho \colon \calF \to \naturals$. A set function $\phi \colon A \to B$ is called a \emph{homomorphism} from $\frakA$ to $\frakB$ if
     %
     \begin{equation*}
-        \phi \left( f_i(a_1, \ldots, a_{\rho(i)}) \right)
-            = g_i \left( \phi(a_1), \ldots, \phi(a_{\rho(i)}) \right)
+        \phi \left( f^\frakA(a_1, \ldots, a_n) \right)
+            = f^\frakB \left( \phi(a_1), \ldots, \phi(a_n) \right)
     \end{equation*}
     %
-    for all $i \in I$ and all $a_1, \ldots, a_{\rho(i)} \in A$. And this is equivalent to the diagram (in $\catSet$)
+    with $n = \rho(f)$ for all $f \in \calF$ and all $a_1, \ldots, a_n \in A$. In this case we write $\phi \colon \frakA \to \frakB$. This is equivalent to the diagram (in $\catSet$)
     %
     \begin{equation*}
         \begin{tikzcd}
             A^n
                 \ar[r, "\phi \times \cdots \times \phi"]
-                \ar[d, "f_i", swap]
+                \ar[d, "f^\frakA", swap]
             & B^n
-                \ar[d, "g_i"] \\
+                \ar[d, "f^\frakB"] \\
             A
                 \ar[r, "\phi", swap]
             & B
         \end{tikzcd}
     \end{equation*}
     %
-    commuting for all $i \in I$. In the case where $\rho(i) = 0$ we interpret the $0$-fold product of $\phi$ with itself as the unique map $1 \to 1$, and the above square is equivalent to the triangle
+    commuting for all $f \in \calF$. In the case where $\rho(f) = 0$ we interpret the $0$-fold product of $\phi$ with itself as the unique map $1 \to 1$, and the above square is equivalent to the triangle
     %
     \begin{equation*}
         \begin{tikzcd}[column sep=small]
             & 1
-                \ar[dl, "f_i", swap]
-                \ar[dr, "g_i"] \\
+                \ar[dl, "f^\frakA", swap]
+                \ar[dr, "f^\frakB"] \\
             A
                 \ar[rr, "\phi", swap]
             && B
         \end{tikzcd}
     \end{equation*}
     %
-    Then $f_i$ and $g_i$ are constants, and this diagram means that $\phi(f_i) = g_i$, i.e. that $\phi$ preserves this constant.
+    Then $f^\frakA$ and $f^\frakB$ are constants, and this diagram means that $\phi(f^\frakA) = f^\frakB$, i.e. that $\phi$ preserves the constant corresponding to $f$.
 
     By pasting together two of the above types of diagrams, it is easy to see that function composition preserves homomorphisms. Since the identity on each algebra is obviously a homomorphism, each similarity type gives rise to a category.
 \end{remarkbreak}
@@ -472,11 +478,9 @@
 
 \begin{remarkbreak}[Homomorphisms and generating subalgebras]
     \label{rem:generating-subalgebra}
-    If $\frakA = \langle A, F \rangle$ is an algebra and $S \subseteq A$, then we denote the smallest subalgebra of $\frakA$ containing $S$ by $\gen{S}$, or $\gen{S}_{\frakA}$ if needed.
+    If $\frakA = \langle A, F \rangle$ is an algebra and $S \subseteq A$, then we denote the smallest subalgebra of $\frakA$ containing $S$ by $\gen{S}_\frakA$, or simply $\gen{S}$ if $\frakA$ is understood.
 
-    Often we are interested in studying a family of algebras of the same type (groups, rings, modules over a fixed ring, etc.). In this case we fix a set $\calF$ of \emph{operation symbols} and a similarity type $\rho \colon \calF \to \naturals$. An algebra of this type is then an algebra on the form $\frakA = \langle A, \calF^\frakA \rangle$, where $\calF^\frakA$ is an \emph{interpretation} of the symbols in $\calF$. That is a set $\set{f^\frakA}{f \in \calF}$ of operations on $A$ such that $f^\frakA$ has arity $\rho(f)$.
-
-    Let $\frakA = \langle A, \calF^\frakA \rangle$ and $\frakB = \langle B, \calF^\frakB \rangle$ be algebras of the same type, where $\calF$ is a family of operation symbols. If $\phi \colon \frakA \to \frakB$ is a homomorphism and $S \subseteq A$, then we claim that $\gen{\phi(S)}_\frakB = \phi(\gen{S}_\frakA)$. The inclusion \enquote{$\subseteq$} is obvious since the image of a subalgebra is a subalgebra. For the other inclusion, first define $S_0 = S$ and
+    Let $\frakA = \langle A, \calF^\frakA \rangle$ and $\frakB = \langle B, \calF^\frakB \rangle$ be algebras of the same type, where $\calF$ is a family of operation symbols. If $\phi \colon \frakA \to \frakB$ is a homomorphism and $S \subseteq A$ is any subset, then we claim that $\gen{\phi(S)}_\frakB = \phi(\gen{S}_\frakA)$. The inclusion \enquote{$\subseteq$} is obvious since the image of a subalgebra is a subalgebra. For the other inclusion, first define $S_0 = S$ and
     %
     \begin{equation*}
         S_{n+1}
@@ -2978,8 +2982,6 @@ Ideals $I$ and $J$ in a (not necessarily commutative) ring $R$ are said to be \e
     %
     Thus $\alpha(r)$ and $s$ commute as claimed.
 \end{remarkbreak}
-
-\newcommand{\frakS}{\mathfrak{S}}
 
 \begin{remarkbreak}[The category of $R$-algebras]
     Above we saw two ways of thinking of algebras over a commutative ring $R$. In fact we have at least four ways of thinking about $R$-algebras:
