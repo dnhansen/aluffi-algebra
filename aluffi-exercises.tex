@@ -3271,7 +3271,14 @@ This result says that, given an $R$-module structure on $M$, the only thing need
 \end{exerciseframed}
 
 \begin{solution}
-    Consider the map $\ker p \oplus \im p \to M$ given by $(n,m) \mapsto n + m$, which is easily seen to be a homomorphism. It has the inverse $m \mapsto (m - p(m), p(m))$, hence is an isomorphism.
+    Consider the map
+    %
+    \begin{align*}
+        [i_{\ker p}, i_{\im p}] \colon \ker p \oplus \im p &\to M, \\
+        (n,m) &\mapsto n + m,
+    \end{align*}
+    %
+    i.e. the coproduct map of the inclusions $i_{\ker p}$ and $i_{\im p}$ into $M$. This has the inverse $m \mapsto (m - p(m), p(m))$, hence is an isomorphism.
 \end{solution}
 
 
