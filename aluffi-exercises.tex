@@ -323,6 +323,18 @@
 
 \section{Examples of groups}
 
+\begin{remarkbreak}[Bezout's identity]
+    The identity in \exref{2.2.13} is known as \emph{Bezout's identity}. Notice that if $a,b,m,n \in \ints$ satisfy
+    %
+    \begin{equation*}
+        am + bn = 1,
+    \end{equation*}
+    %
+    then the exercise not only shows that $m$ and $n$ are relatively prime, but also that $(a,b)$, $(m,b)$ and $(a,n)$ are pairs of relatively prime integers.
+
+    If $[m]_n \in (\ints/n\ints)^*$, then there exist $a,b \in \ints$ such that $am + bn = 1$. But this also shows that $a$ and $n$ are relatively prime (so $[a]_n$ is a multiplicative inverse of $[m]_n$), finishing the proof of Proposition~2.6 which says that $(\ints/n\ints)^*$ is a group.
+\end{remarkbreak}
+
 \begin{exerciseframed}[2.2.1]
     One can associate an $n \times n$ matrix $M_\sigma$ with a permutation $\sigma \in S_n$ by letting the entry at\footnotemark{} $(i,\sigma(i))$ be $1$ and letting all other entries be $0$. Prove that, with this notation,
     %
@@ -1505,16 +1517,16 @@ Exercise~8.14 is solved by the same argument.
     %
     as claimed.
 
-    We also have the following corollary:\footnote{This result allows us to solve congruences like $x^k \equiv b \bmod n$ if we know $\phi(n)$, and $k$ and $\phi(n)$ are coprime. Bezout's identity furnishes $u,v \in \ints$ such that $ku - \phi(n)v = 1$, which implies that
+    We also have the following corollary:\footnote{This result allows us to solve congruences like $x^k \equiv b \bmod n$ if we know $\phi(n)$, and $k$ and $\phi(n)$ are coprime. Bezout's identity (\exref{2.2.13}) furnishes $u,v \in \ints$ such that $ku + \phi(n)v = 1$, which implies that
     %
     \begin{equation*}
         b^u
             \equiv x^{ku}
-            = x^{1 + \phi(n)v}
-            \equiv x \pmod n
+            = x^{1 - \phi(n)v}
+            \equiv x \pmod n.
     \end{equation*}
     %
-    Notice that $u$ is in fact a multiplicative inverse for $k$ mod $\phi(n)$; of course any such inverse will do.
+    Notice that $u$ is in fact a multiplicative inverse of $k$ mod $\phi(n)$; of course any such inverse will do.
     
     Note also that the corollary does not hold (in general) without the assumption on $n$. For a prime $p$ we have $\phi(p^2) = p(p-1)$ which is even, say $\phi(p^2) = 2k$. Thus
     %
@@ -1535,7 +1547,7 @@ Exercise~8.14 is solved by the same argument.
     %
     If $n = p$ is a prime and $p \divides a$, then both sides are zero mod $p$. If instead $a$ and $p$ are coprime, then the claim follows from Euler's theorem (or Fermat's little theorem).
 
-    Next, if $m$ and $n$ are coprime and \cref{eq:Eulers-theorem-corollary} holds as stated as well as with $n$ replaced by $m$, then by \exref{5.6.8} we have
+    Next, if $m$ and $n$ are coprime and \cref{eq:Eulers-theorem-corollary} holds as stated, as well as with $n$ replaced by $m$, then by \exref{5.6.8} we have
     %
     \begin{equation*}
         a^{1+\phi(mn)v}
