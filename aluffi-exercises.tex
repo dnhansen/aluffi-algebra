@@ -55,9 +55,9 @@
 % Lists
 \usepackage{enumitem}
 \setenumerate[0]{label=\normalfont(\alph*)}
-\setlist{  
-  listparindent=\parindent,
-  parsep=0pt,
+\setlist{
+    listparindent=\parindent,
+    parsep=0pt,
 }
 
 % Bibliography
@@ -104,6 +104,7 @@
 
 \newcommand{\catSet}{\ncat{Set}} % Category of sets
 \newcommand{\catGrp}{\ncat{Grp}} % Category of groups
+\newcommand{\catFinGrp}{\ncat{FinGrp}} % Category of finite groups
 \newcommand{\catAb}{\ncat{Ab}} % Category of abelian groups
 \newcommand{\catRing}{\ncat{Ring}} % Category of rings
 \newcommand{\catCRing}{\ncat{CRing}} % Category of commutative rings
@@ -940,7 +941,7 @@
 \section{Subgroups}
 
 \begin{remark}
-    We restate Proposition~6.6 in more explicitly categorical language: Let $\phi \colon G \to G'$ be a homomorphism. The inclusion $i \colon \ker\phi \to G$ is an equaliser of $\phi$ and the trivial map $0 \colon G \to G'$. In other words, for any group homomorphism $\alpha \colon K \to G$ such that $\phi \circ \alpha = 0 \circ \alpha$ there is a unique homomorphism $\overline\alpha \colon K \to \ker\phi$ such that the following diagram commutes:
+    We restate Proposition~6.6 in more explicitly categorical language: Let $\phi \colon G \to G'$ be a homomorphism. The inclusion $i \colon \ker\phi \to G$ is an equaliser of $\phi$ and the trivial map $e \colon G \to G'$. In other words, for any group homomorphism $\alpha \colon K \to G$ such that $\phi \circ \alpha = e \circ \alpha$ there is a unique homomorphism $\overline\alpha \colon K \to \ker\phi$ such that the following diagram commutes:
     %
     \begin{equation*}
         \begin{tikzcd}[row sep=tiny]
@@ -950,7 +951,7 @@
             \\
             & G
                 \ar[r, "\phi", shift left]
-                \ar[r, "0", shift right, swap]
+                \ar[r, "e", shift right, swap]
             & G'
             \\
             \ker\phi
@@ -962,7 +963,70 @@
 \end{remark}
 
 
-% Exercise II.6.2: Reference in IV.1.20
+\begin{remarkbreak}[Equaliser subgroups]
+    \label{rem:equaliser-subgroups}
+    A subgroup $H$ of a group $G$ is called an \emph{equaliser subgroup} if it is the equaliser of two parallel homomorphisms $\phi,\psi \colon G \to G'$, i.e. if $H = \set{g \in G}{\phi(g) = \psi(g)}$. The above remark shows that kernels (and hence normal subgroups) are equaliser subgroups.
+
+    In fact, every subgroup of any group is an equaliser subgroup, a fact we return to in [TODO epi surjection]. To show this, let $H$ be a subgroup of $G$, let $\mathbf{1} = \{*\}$ be a one-element set, and let $K$ be the permutation group of the disjoint union $G/H \coprod \mathbf{1}$. Let $\rho \in S$ be the permutation that exchanges $eH$ and the element $*$ of $\mathbf{1}$ and leaves the rest of the set fixed. Then define the maps $\phi, \psi \colon G \to S$ by $\phi(g) = \lambda_g \coprod \id_{\mathbf{1}}$, where $\lambda_g$ is left multiplication by $g$, and define further $\psi(g) = \rho \circ \phi(g) \circ \rho\inv$. For $g,g' \in G$ we have
+    %
+    \begin{align*}
+        \phi(gg')
+            &= \lambda_{gg'} \coprod \id_{\mathbf{1}} \\
+            &= (\lambda_g \circ \lambda_{g'}) \coprod \id_{\mathbf{1}} \\
+            &= (\lambda_g \coprod \id_{\mathbf{1}}) \circ (\lambda_{g'} \coprod \id_{\mathbf{1}}) \\
+            &= \phi(g) \circ \phi(g'),
+    \end{align*}
+    %
+    so $\phi$ is a homomorphism. We further have
+    %
+    \begin{equation*}
+        \psi(gg')
+            = \rho \circ \phi(gg') \circ \rho\inv
+            = (\rho \circ \phi(g) \circ \rho\inv) \circ (\rho \circ \phi(g') \circ \rho\inv)
+            = \psi(g) \circ \psi(g'),
+    \end{equation*}
+    %
+    and so $\psi$ is also a homomorphism.
+
+    Next notice that if $g \in H$, then $g(eH) = eH$, so
+    %
+    \begin{equation*}
+        \psi(g)(*)
+            = (\rho \circ \phi(g) \circ \rho\inv)(*)
+            = (\rho \circ \phi(g))(eH)
+            = \rho(eH)
+            = *
+            = \phi(g)(*),
+    \end{equation*}
+    %
+    and we similarly find that $\phi(g)(g'H) = \psi(g)(g'H)$ when $g' \in H$, since then $g'H = eH$. For $g' \in G \setminus H$ we have $gg' \not\in H$, so
+    %
+    \begin{equation*}
+        \psi(g)(g'H)
+            = (\rho \circ \phi(g) \circ \rho\inv)(g'H)
+            = (\rho \circ \phi(g))(g'H)
+            = \rho(gg'H)
+            = gg'H
+            = \phi(g)(g'H).
+    \end{equation*}
+    %
+    Hence $\phi(g) = \psi(g)$ when $g \in H$. Now assume that $g \not\in H$. Then also $g\inv \not\in H$, so
+    %
+    \begin{equation*}
+        \psi(g)(g\inv H)
+            = (\rho \circ \phi(g) \circ \rho\inv)(g\inv H)
+            = (\rho \circ \phi(g))(g\inv H)
+            = \rho(eH)
+            = *.
+    \end{equation*}
+    %
+    On the other hand, $\phi(g)(g\inv H) = eH$, so $\phi(g) \neq \psi(g)$ when $g \not\in H$. In total, $H$ is the equaliser subgroup of $\phi$ and $\psi$.
+
+    Notice that if $G$ is finite then $K$ is also finite, so this argument shows that in the category $\catFinGrp$ of finite groups, every subgroup is also an equaliser.
+\end{remarkbreak}
+
+
+% TODO? Exercise II.6.2: Reference in IV.1.20
 
 \begin{exerciseframed}[2.6.4]
     Let $G$ be a group, and let $g \in G$. Verify that the image of the exponential map $\epsilon_g \colon \ints \to G$ is a cyclic group (in the sense of Definition~4.7).
@@ -1148,6 +1212,95 @@
 \end{remark}
 
 
+\begin{remarkbreak}[Coslice categories and quotients]
+    Fix a set $A$, and let $\sim$ be an equivalence relation on $A$. Consider the category $\catSet_{\sim}$, which is the subcategory of the coslice category $A/\catSet$ whose objects are set functions $f \colon A \to X$ with the property that $a \sim a'$ implies $f(a) = f(a')$. We claim that the quotient map $\pi \colon A \to A/{\sim}$ is initial in $\catSet_{\sim}$. That is, for any function $f$ as above, there is a unique set function $\tilde{f} \colon A/{\sim} \to X$ making the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=tiny]
+            & A
+                \ar[dl, "\pi", swap]
+                \ar[dr, "f"] \\
+            A/{\sim}
+                \ar[rr, "\tilde{f}", swap]
+            && X
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commute. But this is just the function $\tilde{f}([a]) = f(a)$.
+
+    Next fix a group $G$, and let $\sim$ be a both left- and right-invariant equivalence relation on $G$. Consider the category $\catGrp_{\sim}$, which is the subcategory of $\catSet_{\sim}$ whose objects and arrows are all group homomorphisms. Then the quotient map $\pi \colon G \to G/{\sim}$ is initial in $\catSet_{\sim}$, and we claim that it is also initial in $\catGrp_{\sim}$. This will follow if, in the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=tiny]
+            & G
+                \ar[dl, "\pi", swap]
+                \ar[dr, "\phi"] \\
+            G/{\sim}
+                \ar[rr, "\tilde{\phi}", swap]
+            && H
+        \end{tikzcd}
+    \end{equation*}
+    %
+    both $\pi$ and $\tilde{\phi}$ are group homomorphisms. But $\pi$ is a homomorphism since $\sim$ is invariant, so $\pi$ is indeed an object in $\catGrp_{\sim}$. And $\tilde{\phi}$ is easily seen to be a homomorphism, so it is indeed an arrow in $\catGrp_{\sim}$.
+
+    Finally let $G$ be an arbitrary group, and let $\catAb_G$ be the subcategory of $G/\catGrp$ whose objects are group homomorphisms $\phi \colon G \to H$ such that $H$ is an \emph{abelian} group. Notice that for such a $\phi$, the commutator subgroup $[G,G]$ (which is normal by \exref{2.7.11}) is contained in $\ker\phi$. Letting $\sim$ denote the equivalence relation on $G$ generated by $[G,G]$, then $\phi$ respects $\sim$, and so $\catAb_G$ is a full subcategory of $\catGrp_{\sim}$. But $G/{\sim}$ is the abelianisation $G_\ab = G/[G,G]$ of $G$, in particular abelian by \exref{2.7.11}, so the quotient map $\pi \colon G \to G/{\sim}$ is initial in $\catGrp_{\sim}$ and hence also in $\catAb_G$. This means that every homomorphism $\phi \colon G \to H$ with $H$ abelian factors uniquely through $G_\ab$, i.e. there is a unique homomorphism $\tilde{\phi}$ such that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}[column sep=tiny]
+            & G
+                \ar[dl, "\pi", swap]
+                \ar[dr, "\phi"] \\
+            G_\ab
+                \ar[rr, "\tilde{\phi}", swap]
+            && H
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[The abelianisation functor]
+    Let $G$ and $H$ be groups, and let $\pi_G \colon G \to G_\ab$ and $\pi_H \colon H \to H_\ab$ be the quotient maps onto their abelianisations. For any homomorphism $\phi \colon G \to H$, the map $\pi_H \circ \phi$ maps from a group to an abelian group, so there is a unique homomorphism $\phi_\ab \colon G_\ab \to H_\ab$ such that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            G
+                \ar[d, "\pi_G", swap]
+                \ar[r, "\phi"]
+            & H
+                \ar[d, "\pi_H"] \\
+            G_\ab
+                \ar[r, "\phi_\ab", swap]
+            & H_\ab
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes. This gives rise to a map $(-)_\ab \colon \catGrp \to \catAb$ between categories. To see that this is a functor, let $\psi \colon H \to K$ be another group homomorphism, and consider the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            G
+                \ar[d, "\pi_G", swap]
+                \ar[r, "\phi"]
+            & H
+                \ar[d, "\pi_H"]
+                \ar[r, "\psi"]
+            & K
+                \ar[d, "\pi_K"] \\
+            G_\ab
+                \ar[r, "\phi_\ab", swap]
+                \ar[rr, "(\psi \circ \phi)_\ab", swap, bend right]
+            & H_\ab
+                \ar[r, "\psi_\ab", swap]
+            & K_\ab
+        \end{tikzcd}
+    \end{equation*}
+    %
+    By uniqueness we have $(\psi \circ \phi)_\ab = \psi_\ab \circ \phi_\ab$, so $(-)_\ab$ is indeed a functor. In fact, if $U \colon \catAb \to \catGrp$ is the forgetful functor, we have an adjunction $(-)_\ab \dashv U$.
+\end{remarkbreak}
+
+
 \begin{exerciseframed}[2.7.10]
     Let $G$ be a group, and $H \subseteq G$ a subgroup. With notation as in \exref{2.6.7}, show that $H$ is normal in $G$ if and only if $\gamma(H) \subseteq H$ for all $\gamma \in \Inn(G)$.
 \end{exerciseframed}
@@ -1225,6 +1378,25 @@
 \begin{solution}
     First notice that $[F(A),F(A)]$ and $[F(B),F(B)]$ are isomorphic, since homomorphisms send commutators to commutators, so $F(A)/[F(A),F(A)]$ and $F(B)/[F(B),F(B)]$ are also isomorphic. Thus \exref{2.7.12} implies that $F^\ab(A) \cong F^\ab(B)$. By \exref{2.5.10} we then have $A \cong B$ as desired.
 \end{solution}
+
+
+\begin{exerciseframed}[2.7.14]
+    Let $G$ be a group. Prove that $\Inn(G)$ is a normal subgroup of $\Aut(G)$.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $g \in G$ and $\phi \in \Aut(G)$. For $h \in G$ we then have
+    %
+    \begin{equation*}
+        (\phi \circ \gamma_g \circ \phi\inv)(h)
+            = \phi \bigl( g \phi\inv(h) g\inv \bigr)
+            = \phi(g) h \phi(g)\inv
+            = \gamma_{\phi(g)}(h),
+    \end{equation*}
+    %
+    so $\phi \circ \gamma_g \circ \phi\inv = \gamma_{\phi(g)} \in \Inn(G)$ as desired.
+\end{solution}
+
 
 
 \section{Canonical decomposition and Lagrange's theorem}
@@ -1420,6 +1592,13 @@
     \end{equation*}
     %
     where $T \colon V \to W$ is a linear map.
+\end{remarkbreak}
+
+
+\begin{remarkbreak}[Epimorphism $\implies$ surjective]
+    Clearly, surjective homomorphisms are epimorphisms, but the converse is also true.
+    
+    In \cref{rem:equaliser-subgroups} we showed that every subgroup of a group is an equaliser subgroup, and the above is an easy corollary: Let $\phi \colon G \to H$ be an epimorphism in $\catGrp$ (or in $\catFinGrp$, the argument is the same). Since $\phi(G)$ is a subgroup of $H$, there are group homomorphisms $\psi_1, \psi_2 \colon H \to K$ (where $K$ is finite if we are working in $\catFinGrp$) such that $\phi(G)$ is the equaliser subgroup of $\psi_1$ and $\psi_2$. But then $\psi_1 \circ \phi = \psi_2 \circ \phi$, and since $\phi$ is epic we have $\psi_1 = \psi_2$, so the two homomorphisms in fact agree on $H$. Hence $\phi(G) = H$ and $\phi$ is surjective.
 \end{remarkbreak}
 
 
@@ -1650,6 +1829,47 @@ Exercise~8.14 is solved by the same argument.
 
 
 \section{Group actions}
+
+\begin{remarkbreak}[$G$-sets in universal algebra]
+    Let $\sigma \colon G \to \Aut_\catSet(A)$ and $\tau \colon G \to \Aut_\catSet(B)$ be group actions. The $G$-set structure on e.g. $A$ may be captured by the algebra
+    %
+    \begin{equation*}
+        \frakA
+            = \bigl\langle A, \langle \sigma_g \mid g \in G \rangle \bigr\rangle,
+    \end{equation*}
+    %
+    where $\sigma_g = \sigma(g)$. A homomorphism (i.e. a $G$-equivariant map) is then a map $\phi \colon A \to B$ such that the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            A
+                \ar[r, "\phi"]
+                \ar[d, "\sigma_g", swap]
+            & B
+                \ar[d, "\tau_g"] \\
+            A
+                \ar[r, "\phi", swap]
+            & B
+        \end{tikzcd}
+    \end{equation*}
+    %
+    commutes for all $g \in G$. This is of course equivalent to the diagram
+    %
+    \begin{equation*}
+        \begin{tikzcd}
+            G \prod A
+                \ar[r, "\id_G \prod \phi"]
+                \ar[d]
+            & G \prod B
+                \ar[d] \\
+            A
+                \ar[r, "\phi", swap]
+            & B
+        \end{tikzcd}
+    \end{equation*}
+    %
+    where the vertical maps are the maps from Definition~9.2.
+\end{remarkbreak}
 
 \begin{remark}
     We elaborate on the orbit-stabiliser theorem (Proposition~9.9). Let $G$ be a group with a transitive left-action on a set $A$, and fix an element $a \in A$. We define an equivalence relation on $G$ by letting $g_1 \sim g_2$ if and only if $g_1 a = g_2 a$. This is the case just when $g_1\inv g_2 a = a$, i.e. when $g_1\inv g_2 \in \stab_G(a)$. Since $e_G \in \stab_G(a)$ we see that $\sim$ agrees with the equivalence relation induced by $\stab_G(a)$ as a subgroup of $G$.
@@ -2515,6 +2735,30 @@ We have added the assumption that $R$ be nonzero since the zero ring is not a fi
 
 \section{Ideals and quotients: Remarks and examples. Prime and maximal ideals}
 
+\begin{remarkbreak}[Polynomial division]
+    Let $R$ be a nonzero ring. We prove the following result:
+    %
+    \begin{displaytheorem}
+        Let $f(x), g(x) \in R[x]$ with $f(x)$ monic. There exist polynomials $q(x), r(x) \in R[x]$ with $\deg r(x) < \deg f(x)$ such that
+        %
+        \begin{equation*}
+            g(x) = f(x) q(x) + r(x).
+        \end{equation*}
+    \end{displaytheorem}
+    %
+    Furthermore, Lemma~4.5 shows that $q(x)$ and $r(x)$ are uniquely determined.
+
+    Let $d = \deg f(x)$ and assume that $g(x) = ax^n$ with $a \neq 0$. If $n < d$ then $q(x) = 0$ and $r(x) = g(x)$ work. If instead $n \geq d$, then we have
+    %
+    \begin{equation*}
+        ax^n
+            = ax^{n-d} f(x) + \bigl( ax^n - ax^{n-d} f(x) \bigr),
+    \end{equation*}
+    %
+    and the latter polynomial has degree strictly less than $d$. By induction we may thus perform division when $g(x)$ is a monomial. The claim for general $g(x)$ follows by linearity.
+\end{remarkbreak}
+
+
 \begin{remarkbreak}[Fields and maximal ideals]
     If $R$ is a commutative ring and $I \subseteq R$ is any subset, we know that it makes sense to consider the quotient ring $R/I$ only when $I$ is an ideal. By taking the quotient with $I$ we are effectively forcing every element of $I$ to be zero, and only these elements to be zero. First of all we must then have $0 \in I$, and $I$ must also be closed under addition since $0 + 0 = 0$. Clearly $-0 = 0$, so each element in $I$ must also have an additive inverse. Thus $I$ is a group.
 
@@ -2911,6 +3155,8 @@ Ideals $I$ and $J$ in a (not necessarily commutative) ring $R$ are said to be \e
 
 \begin{solution}
     Let $I$ be an ideal in $\reals[x]$ that properly contains $(x^2 + 1)$. Since $\reals[x]$ is a PID by \exref{3.4.4}, there is a polynomial $f(x) \in \reals[x]$ such that $I = (f(x))$. Then $x^2 + 1 = q(x)f(x)$ for some $q(x) \in \reals[x]$. If $q(x) \in \reals$, then $f(x) \in (x^2 + 1)$ which is impossible, so we must have $0 < \deg q(x) \leq 2$. If $\deg q(x) = 1$, then $q(x)$ has a root in $\reals$. This is then also a root of $x^2 + 1$, which is also impossible. Hence $\deg q(x) = 2$, which implies that $f(x) \in \reals$. Thus $I = \reals[x]$.
+
+    Alternatively, Example~4.8 shows that $\reals[x]/(x^2+1) \cong \complex$ which is a field, in particular a simple ring. But then either Proposition~4.11 or \exref{3.4.20} implies that $(x^2+1)$ is maximal.
 \end{solution}
 
 
@@ -3106,7 +3352,7 @@ Ideals $I$ and $J$ in a (not necessarily commutative) ring $R$ are said to be \e
     Let $R$ be a commutative ring, viewed as an $R$-module over itself, and let $M$ be an $R$-module. Prove that $\Hom_\catRMod(R,M) \cong M$ as $R$-modules.
 \end{exerciseframed}
 %
-Recall (cf. §5.3) that if $M$ and $N$ are modules over a (not necessarily commutative ring) $R$, then $\Hom_\catRMod(M,N)$ is an abelian group, but that we need $R$ to be commutative for this to also be a module in general.
+Recall (cf. §5.3) that if $M$ and $N$ are modules over a (not necessarily commutative) ring $R$, then $\Hom_\catRMod(M,N)$ is an abelian group, but that we need $R$ to be commutative for this to also be a module in general.
 
 \begin{solution}
     Define a map $\alpha \colon \Hom_\catRMod(R,M) \to M$ by $\alpha(\phi) = \phi(1_R)$. This is easily seen to be a module homomorphism. For $m \in M$ define a map $\beta_m \colon R \to M$ by $\beta_m(r) = rm$, which is clearly a module homomorphism, and further define $\beta \colon M \to \Hom_\catRMod(R,M)$ by $\beta(m) = \beta_m$. This is also a module homomorphism: For $m,m' \in M$ and $r,s \in R$ we have
@@ -4255,7 +4501,7 @@ This result says that, given an $R$-module structure on $M$, the only thing need
 
 
 \begin{exerciseframed}[4.2.5]
-    Let G be a simple group, and assume $\phi \colon G \to G'$ is a nontrivial group homomorphism. Prove that $\phi$ is injective.
+    Let $G$ be a simple group, and assume $\phi \colon G \to G'$ is a nontrivial group homomorphism. Prove that $\phi$ is injective.
 \end{exerciseframed}
 
 \begin{solution}
@@ -4266,6 +4512,15 @@ This result says that, given an $R$-module structure on $M$, the only thing need
 \chapter{Irreducibility and factorization in integral domains}
 
 \section{Chain conditions and existence of factorizations}
+
+\begin{exerciseframed}[5.1.13]
+    Prove that prime $\Leftrightarrow$ irreducible in $\ints$.
+\end{exerciseframed}
+
+\begin{solution}
+    Since $\ints$ is an integral domain, it suffices by Lemma~1.7 to show that every irreducible element is prime, so let $p$ be irreducible and assume that $p \divides ab$. If $p \divides a$ then we are done, so assume that $p \not\mid a$. Then $p$ and $a$ are coprime, so there exist $c,d \in \ints$ such that $pc + ad = 1$. This implies that $pbc + abd = b$, and $p$ divides the left-hand side so it divides $b$. % TODO: not divides command??
+\end{solution}
+
 
 \section{UFDs, PIDs, Euclidean domains}
 
