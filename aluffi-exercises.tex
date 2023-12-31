@@ -322,6 +322,15 @@
 \end{solution}
 
 
+\begin{exerciseframed}[2.1.15]
+    Let $G$ be a commutative group, and let $g \in G$ be an element of maximal finite order. Prove that if $h \in G$ has finite order in $G$, then $\ord{h}$ divides $\ord{g}$. 
+\end{exerciseframed}
+
+\begin{solution}
+    If not, then some prime $p$ divides $\ord{h}$ strictly more times than it does $\ord{g}$, say $\ord{h} = p^n s$ and $\ord{g} = p^m r$ with $m < n$ and $r,s$ relatively prime to $p$. Then $\ord{g^{p^m}} = r$ and $\ord{h^s} = p^n$ are relatively prime, so \exref{2.1.14} implies that $\ord{g^{p^m} h^s} = p^n r$, which is strictly greater than $\ord{g}$. This is a contradiction, so $\ord{h}$ does in fact divide $\ord{g}$.
+\end{solution}
+
+
 \section{Examples of groups}
 
 \begin{remarkbreak}[Bezout's identity]
@@ -779,6 +788,36 @@
 
 \begin{solution}
     The map $\pi = (\pi_m^{mn}, \pi_n^{mn})$ is a group homomorphism, and since the sets $C_{mn}$ and $C_m \prod C_n$ have the same cardinality, it suffices to show that $\pi$ is injective. Using additive notation, if $\pi([a]_{mn}) = \pi([b]_{mn})$ then $[a]_m = [b]_m$, i.e. $m \mid a - b$. Similarly $n \mid a - b$, and since $\gcd(m,n) = 1$ we have $mn \mid a - b$. It follows that $[a]_{mn} = [b]_{mn}$ as desired.
+
+    In fact, it is easy to see that $\pi$ is a \emph{ring} homomorphism (hence isomorphism) between $\ints/mn\ints$ and $\ints/m\ints \prod \ints/n\ints$.
+\end{solution}
+
+
+\begin{exerciseframed}[2.4.10]
+    Let $p \neq q$ be odd prime integers; show that $(\ints/pq\ints)^*$ is not cyclic.
+\end{exerciseframed}
+
+\begin{solution}
+    If $R$ and $S$ are rings, then it is easy to see that $(R \prod S)^* \cong R^* \prod S^*$ as groups.\footnote{In fact, the functor $(-)^* \colon \catRing \to \catGrp$ given by $R \mapsto R^*$ is right adjoint to the functor sending a group $G$ to the group ring $\ints[G]$. There is a similar functor into the category of monoids mapping a ring to its underlying multiplicative monoid, and this is right adjoint to the functor $M \mapsto \ints[M]$.} In particular, \exref{2.4.9} implies that $(\ints/pq\ints)^*$ is isomorphic to $(\ints/p\ints)^* \prod (\ints/q\ints)^*$ and thus has order $(p-1)(q-1)$.
+    
+    If $(a,b) \in (\ints/p\ints)^* \prod (\ints/q\ints)^*$ is a generator, then $\ord{a} = p-1$ and $\ord{b} = q-1$, so the order of $(a,b) = (a,1)(1,b)$ divides
+    %
+    \begin{equation*}
+        \lcm(\ord{(a,1)}, \ord{(1,b)})
+            = \lcm(\ord{a}, \ord{b})
+            = \frac{(p-1)(q-1)}{\gcd(p-1, q-1)}.
+    \end{equation*}
+    %
+    But $p-1$ and $q-1$ are both even, so this is strictly less than $(p-1)(q-1)$, so $(a,b)$ cannot be a generator, which is a contradiction. Hence $(\ints/p\ints)^* \prod (\ints/q\ints)^*$ is not cyclic.
+\end{solution}
+
+
+\begin{exerciseframed}[2.4.11]
+    In due time we will prove the easy fact that if $p$ is a prime integer, then the equation $x^d = 1$ can have at most $d$ solutions in $\ints/p\ints$. Assume this fact, and prove that the multiplicative group $(\ints/p\ints)^*$ is cyclic.
+\end{exerciseframed}
+
+\begin{solution}
+    Let $g \in G$ have maximal order. Then \exref{2.1.15} implies that $h^{\ord{g}} = 1$ for all $h \in G$. The equation $x^{\ord{g}} = 1$ thus has at least $p-1$ solutions, so $\ord{g} \geq p-1$.
 \end{solution}
 
 
